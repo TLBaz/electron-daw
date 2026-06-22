@@ -1,0 +1,423 @@
+/* ============================================
+   DAW MAIN LAYOUT
+   ============================================ */
+
+.daw-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    background-color: var(--color-bg-main);
+    overflow: hidden;
+}
+
+.daw-main {
+    display: flex;
+    flex: 1;
+    gap: 1px;
+    overflow: hidden;
+    background-color: var(--color-border);
+}
+
+/* ============================================
+   LEFT PANEL - BROWSER
+   ============================================ */
+
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    width: 240px;
+    background-color: var(--color-bg-secondary);
+    border-right: 1px solid var(--color-border);
+    overflow: hidden;
+    transition: width var(--transition-base);
+}
+
+.left-panel.collapsed {
+    width: 0;
+    border-right: none;
+    overflow: hidden;
+}
+
+.left-panel header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md);
+    background-color: var(--color-bg-tertiary);
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+.left-panel h3 {
+    margin: 0;
+    font-size: var(--font-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+}
+
+.left-panel-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
+}
+
+/* ============================================
+   RIGHT PANEL - INSPECTOR
+   ============================================ */
+
+.right-panel {
+    display: flex;
+    flex-direction: column;
+    width: 280px;
+    background-color: var(--color-bg-secondary);
+    border-left: 1px solid var(--color-border);
+    overflow: hidden;
+    transition: width var(--transition-base);
+}
+
+.right-panel.collapsed {
+    width: 0;
+    border-left: none;
+    overflow: hidden;
+}
+
+.right-panel header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md);
+    background-color: var(--color-bg-tertiary);
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+.right-panel h3 {
+    margin: 0;
+    font-size: var(--font-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+}
+
+.right-panel-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-md);
+}
+
+/* ============================================
+   CENTER SECTION - ARRANGEMENT
+   ============================================ */
+
+.daw-center {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.daw-arrangement {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* ============================================
+   BOTTOM PANEL - TABS
+   ============================================ */
+
+.bottom-panel {
+    display: flex;
+    flex-direction: column;
+    height: 200px;
+    background-color: var(--color-bg-secondary);
+    border-top: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+.bottom-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-bg-secondary);
+    flex-shrink: 0;
+}
+
+.bottom-tab-btn {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--color-text-secondary);
+    font-size: var(--font-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    white-space: nowrap;
+}
+
+.bottom-tab-btn:hover {
+    color: var(--color-text-primary);
+}
+
+.bottom-tab-btn.active {
+    border-bottom-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.bottom-content {
+    display: none;
+    flex: 1;
+    overflow: auto;
+    padding: var(--spacing-md);
+}
+
+.bottom-content.active {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1600px) {
+    .left-panel {
+        width: 220px;
+    }
+    
+    .right-panel {
+        width: 260px;
+    }
+}
+
+@media (max-width: 1400px) {
+    .left-panel {
+        width: 200px;
+    }
+    
+    .right-panel {
+        width: 240px;
+    }
+    
+    .bottom-panel {
+        height: 180px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .left-panel,
+    .right-panel {
+        width: 0;
+        border: none;
+        overflow: hidden;
+    }
+    
+    .left-panel.collapsed,
+    .right-panel.collapsed {
+        display: none;
+    }
+}
+
+@media (max-height: 900px) {
+    .bottom-panel {
+        height: 160px;
+    }
+    
+    .left-panel,
+    .right-panel {
+        overflow-y: auto;
+    }
+}
+
+@media (max-height: 720px) {
+    .transport-bar {
+        height: 48px;
+        padding: 0 var(--spacing-md);
+        gap: var(--spacing-md);
+    }
+    
+    .bottom-panel {
+        height: 140px;
+    }
+}
+
+/* ============================================
+   SECTION STYLING
+   ============================================ */
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.section-title {
+    font-size: var(--font-sm);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-text-secondary);
+}
+
+.section-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+/* ============================================
+   PROPERTY ROWS
+   ============================================ */
+
+.property-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.property-label {
+    font-size: var(--font-xs);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-text-secondary);
+}
+
+.property-value {
+    font-size: var(--font-sm);
+    color: var(--color-text-primary);
+}
+
+.property-input {
+    width: 100%;
+    padding: var(--spacing-sm);
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-primary);
+    font-family: var(--font-family);
+    font-size: var(--font-sm);
+}
+
+.property-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background-color: var(--color-bg-active);
+}
+
+/* ============================================
+   BROWSER CONTENT
+   ============================================ */
+
+.browser-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.browser-tab-btn {
+    flex: 1;
+    padding: var(--spacing-md);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--color-text-secondary);
+    font-size: var(--font-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    text-align: center;
+}
+
+.browser-tab-btn:hover {
+    color: var(--color-text-primary);
+}
+
+.browser-tab-btn.active {
+    border-bottom-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.browser-content {
+    display: none;
+    flex: 1;
+    overflow: auto;
+    flex-direction: column;
+}
+
+.browser-content.active {
+    display: flex;
+}
+
+/* ============================================
+   TREE VIEW ITEMS
+   ============================================ */
+
+.tree-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.tree-item:hover {
+    background-color: var(--color-bg-active);
+}
+
+.tree-item.selected {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.tree-toggle {
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: transform var(--transition-base);
+}
+
+.tree-toggle.expanded {
+    transform: rotate(90deg);
+}
+
+.tree-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.tree-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--font-sm);
+}
+
+.tree-children {
+    display: none;
+    flex-direction: column;
+}
+
+.tree-children.expanded {
+    display: flex;
+}
+
+.tree-children .tree-item {
+    padding-left: calc(var(--spacing-md) + 20px);
+}

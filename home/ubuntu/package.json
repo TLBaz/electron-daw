@@ -1,0 +1,27 @@
+
+{
+  "name": "electron-daw",
+  "version": "1.0.0",
+  "main": "electron_app.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "ai:python:audiocraft": "python ai/python/audiocraft_generate.py",
+    "ai:python:riffusion": "python ai/python/riffusion_generate.py"
+  },
+  "dependencies": {
+    "@langchain/core": "^0.3.39",
+    "@magenta/music": "^1.23.1",
+    "@tonaljs/tonal": "^4.10.0",
+    "dsp.js": "^1.0.1",
+    "meyda": "^5.6.3",
+    "mongoose": "^6.0.0",
+    "scribbletune": "^4.0.0",
+    "tone": "^15.1.22",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "electron": "^20.0.0",
+    "electron-builder": "^22.0.0"
+  }
+}

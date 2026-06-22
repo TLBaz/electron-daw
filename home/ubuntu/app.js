@@ -46,6 +46,10 @@ class DAWApplication {
             // Setup FL-style step sequencer (16 steps grid)
             if (typeof window.initializeSequencerPanel === 'function') {
                 window.initializeSequencerPanel(this);
+                // Make sequencer available to project manager for persistence
+                if (window.__stepSequencer) {
+                    this.projectManager.sequencer = window.__stepSequencer;
+                }
             }
 
 

@@ -1,0 +1,317 @@
+/* ============================================
+   ARRANGEMENT & TIMELINE
+   ============================================ */
+
+.arrangement {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.ruler {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    background-color: var(--color-bg-secondary);
+    border-bottom: 1px solid var(--color-border);
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 0;
+}
+
+.ruler-container {
+    display: flex;
+    gap: 0;
+    min-width: 100%;
+}
+
+.ruler-marker {
+    flex-shrink: 0;
+    height: 100%;
+    width: 60px;
+    border-right: 1px solid var(--color-grid);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    position: relative;
+    font-size: var(--font-xs);
+    color: var(--color-text-muted);
+}
+
+.ruler-marker.bar {
+    background-color: var(--color-bg-tertiary);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    padding-bottom: var(--spacing-xs);
+}
+
+.ruler-marker.beat {
+    color: var(--color-text-muted);
+    padding-bottom: var(--spacing-xs);
+}
+
+.playhead {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background-color: #51cf66;
+    z-index: 10;
+    box-shadow: 0 0 8px rgba(81, 207, 102, 0.6);
+    pointer-events: none;
+}
+
+.tracks-container {
+    display: flex;
+    flex: 1;
+    overflow: auto;
+    position: relative;
+}
+
+.tracks {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-image:
+        linear-gradient(90deg, var(--color-grid) 1px, transparent 1px),
+        linear-gradient(var(--color-grid) 1px, transparent 1px);
+    background-size: 60px 64px;
+}
+
+.track {
+    display: flex;
+    height: 64px;
+    background-color: var(--color-bg-main);
+    border-bottom: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+.track-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 160px;
+    padding: var(--spacing-md);
+    background-color: var(--color-bg-secondary);
+    border-right: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+.track-name {
+    flex: 1;
+    font-size: var(--font-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.track-controls {
+    display: flex;
+    gap: var(--spacing-xs);
+    margin-left: auto;
+}
+
+.track-btn {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-xs);
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+    font-size: var(--font-xs);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.track-btn:hover {
+    background-color: var(--color-bg-active);
+}
+
+.track-btn.mute.active {
+    background-color: var(--color-accent-mute);
+    color: white;
+}
+
+.track-btn.solo.active {
+    background-color: var(--color-accent-solo);
+    color: black;
+}
+
+.track-clips {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    position: relative;
+}
+
+/* ============================================
+   CLIP STYLING
+   ============================================ */
+
+.clip {
+    position: relative;
+    min-width: 60px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-primary);
+    border: 1px solid transparent;
+    cursor: move;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-xs);
+    color: white;
+    font-weight: var(--font-weight-medium);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.clip:hover:not(.dragging) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.clip.selected {
+    border: 2px solid var(--color-primary);
+    box-shadow: 0 0 12px rgba(0, 136, 255, 0.6);
+}
+
+.clip.variant-1 {
+    background-color: #0088ff;
+}
+
+.clip.variant-2 {
+    background-color: #ff3333;
+}
+
+.clip.variant-3 {
+    background-color: #ffa500;
+}
+
+.clip.variant-4 {
+    background-color: #00d084;
+}
+
+.clip.dragging {
+    opacity: 0.7;
+    z-index: 100;
+}
+
+.clip.drag-over {
+    background-color: rgba(0, 136, 255, 0.2);
+    border: 2px dashed var(--color-primary);
+}
+
+/* ============================================
+   WAVEFORM DISPLAY
+   ============================================ */
+
+.waveform-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+}
+
+.waveform-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.waveform-title {
+    font-size: var(--font-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+}
+
+.waveform-canvas {
+    width: 100%;
+    height: 100px;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+}
+
+/* ============================================
+   PIANO ROLL
+   ============================================ */
+
+.piano-roll-container {
+    display: flex;
+    height: 100%;
+    background-color: var(--color-bg-main);
+    gap: 1px;
+}
+
+.piano-keys {
+    width: 60px;
+    background-color: var(--color-bg-secondary);
+    border-right: 1px solid var(--color-border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.piano-key {
+    flex: 1;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-tertiary);
+    font-size: var(--font-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color var(--transition-base);
+}
+
+.piano-key:hover {
+    background-color: var(--color-bg-active);
+}
+
+.piano-key.black {
+    background-color: var(--color-bg-main);
+}
+
+.piano-grid {
+    flex: 1;
+    background-image:
+        linear-gradient(90deg, var(--color-grid) 1px, transparent 1px),
+        linear-gradient(var(--color-grid) 1px, transparent 1px);
+    background-size: 60px 24px;
+    overflow: auto;
+}
+
+.piano-note {
+    position: absolute;
+    height: 100%;
+    background-color: var(--color-primary);
+    border: 1px solid var(--color-primary-dark);
+    border-radius: var(--radius-xs);
+    cursor: move;
+    opacity: 0.9;
+}
+
+.piano-note:hover {
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(0, 136, 255, 0.5);
+}
+
+.piano-note.selected {
+    background-color: var(--color-primary-light);
+    box-shadow: 0 0 12px rgba(0, 136, 255, 0.7);
+}

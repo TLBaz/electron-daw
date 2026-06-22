@@ -1,0 +1,409 @@
+/* ============================================
+   PROFESSIONAL TRANSPORT BAR
+   ============================================ */
+
+.transport-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    
+    height: 60px;
+    padding: 0 var(--spacing-lg);
+    
+    background: linear-gradient(180deg, var(--color-bg-quaternary), var(--color-bg-tertiary));
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+    
+    position: relative;
+    z-index: 100;
+}
+
+/* ============================================
+   PROJECT NAME & STATUS
+   ============================================ */
+
+.project-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    min-width: 200px;
+}
+
+.project-name {
+    font-size: var(--font-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    user-select: text;
+    cursor: pointer;
+    
+    transition: color var(--transition-base);
+}
+
+.project-name:hover {
+    color: var(--color-primary);
+}
+
+.project-unsaved {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--color-accent-warning);
+    animation: pulse 2s infinite;
+}
+
+.project-unsaved.active {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* ============================================
+   TRANSPORT CONTROLS GROUP
+   ============================================ */
+
+.transport-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* Transport Buttons */
+
+.transport-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    background-color: var(--color-bg-active);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    
+    color: var(--color-text-primary);
+    font-size: var(--font-lg);
+    cursor: pointer;
+    
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-sm);
+}
+
+.transport-btn:hover {
+    background-color: var(--color-bg-hover);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.transport-btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-inset);
+}
+
+/* Play Button - Blue accent */
+
+.transport-btn-play {
+    background-color: #1a4a6f;
+    border-color: var(--color-primary);
+    box-shadow: var(--glow-primary), var(--shadow-sm);
+}
+
+.transport-btn-play:hover {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+    color: #000;
+    box-shadow: var(--glow-primary), var(--shadow-md);
+}
+
+.transport-btn-play.active {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    color: #000;
+    box-shadow: var(--glow-primary), var(--shadow-lg);
+}
+
+/* Stop Button */
+
+.transport-btn-stop {
+    background-color: var(--color-bg-active);
+    border-color: var(--color-border);
+}
+
+.transport-btn-stop:active {
+    background-color: #ff3333;
+    border-color: #ff3333;
+    color: #fff;
+}
+
+/* Loop Button - Highlight on active */
+
+.transport-btn-loop {
+    background-color: var(--color-bg-active);
+    border-color: var(--color-border);
+}
+
+.transport-btn-loop.active {
+    background-color: var(--color-accent-success);
+    border-color: var(--color-accent-success);
+    color: #000;
+    box-shadow: 0 0 16px rgba(138, 255, 128, 0.3), var(--shadow-md);
+}
+
+/* Record Button - Red pulsing */
+
+.transport-btn-record {
+    background-color: var(--color-accent-record);
+    border-color: var(--color-accent-record);
+    color: #fff;
+    font-weight: var(--font-weight-bold);
+    box-shadow: var(--glow-record), var(--shadow-sm);
+}
+
+.transport-btn-record:hover {
+    background-color: #ff5555;
+    box-shadow: var(--glow-record), var(--shadow-md);
+}
+
+.transport-btn-record.recording {
+    animation: record-pulse 0.6s infinite;
+}
+
+@keyframes record-pulse {
+    0%, 100% { box-shadow: var(--glow-record), var(--shadow-lg); }
+    50% { box-shadow: var(--glow-record), var(--shadow-sm); }
+}
+
+/* ============================================
+   SEPARATOR
+   ============================================ */
+
+.transport-separator {
+    width: 1px;
+    height: 30px;
+    background-color: var(--color-border);
+    margin: 0 var(--spacing-sm);
+}
+
+/* ============================================
+   TIME DISPLAY
+   ============================================ */
+
+.transport-time {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: 0 var(--spacing-md);
+    
+    min-width: 200px;
+}
+
+.time-display-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.time-label {
+    font-size: var(--font-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.time-display {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    
+    letter-spacing: 2px;
+    line-height: 1;
+    
+    text-shadow: 0 0 10px rgba(77, 184, 255, 0.3);
+}
+
+.beat-display {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-accent-success);
+    
+    letter-spacing: 1px;
+    line-height: 1;
+}
+
+/* ============================================
+   TEMPO CONTROL
+   ============================================ */
+
+.tempo-control {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    min-width: 100px;
+}
+
+.tempo-label {
+    font-size: var(--font-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tempo-input {
+    width: 100%;
+    height: 32px;
+    
+    font-family: var(--font-mono);
+    font-size: var(--font-md);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    
+    background-color: var(--color-bg-panel);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0 var(--spacing-sm);
+    
+    text-align: center;
+    
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-xs);
+}
+
+.tempo-input:hover {
+    border-color: var(--color-primary);
+}
+
+.tempo-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(77, 184, 255, 0.15), var(--shadow-sm);
+    background-color: var(--color-bg-secondary);
+}
+
+/* ============================================
+   METRONOME & EXTRA CONTROLS
+   ============================================ */
+
+.transport-extras {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.metronome-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    background-color: var(--color-bg-active);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    
+    color: var(--color-text-secondary);
+    font-size: var(--font-md);
+    cursor: pointer;
+    
+    transition: all var(--transition-base);
+}
+
+.metronome-btn:hover {
+    border-color: var(--color-accent-success);
+    color: var(--color-accent-success);
+}
+
+.metronome-btn.active {
+    background-color: var(--color-accent-success);
+    border-color: var(--color-accent-success);
+    color: #000;
+    box-shadow: 0 0 12px rgba(138, 255, 128, 0.3);
+}
+
+/* ============================================
+   SPACER & RIGHT CONTROLS
+   ============================================ */
+
+.transport-spacer {
+    flex: 1;
+}
+
+.transport-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* Settings & Menu Buttons */
+
+.settings-btn,
+.menu-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    background-color: var(--color-bg-active);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    
+    transition: all var(--transition-base);
+}
+
+.settings-btn:hover,
+.menu-btn:hover {
+    background-color: var(--color-bg-hover);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 1400px) {
+    .transport-bar {
+        height: 56px;
+        padding: 0 var(--spacing-md);
+        gap: var(--spacing-sm);
+    }
+    
+    .transport-btn {
+        width: 36px;
+        height: 36px;
+        font-size: var(--font-md);
+    }
+    
+    .time-display {
+        font-size: 16px;
+    }
+    
+    .beat-display {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .project-info {
+        display: none;
+    }
+    
+    .transport-time {
+        min-width: auto;
+    }
+}

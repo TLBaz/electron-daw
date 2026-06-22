@@ -1,0 +1,260 @@
+/* ============================================
+   TRANSPORT BAR STYLING
+   ============================================ */
+
+.transport-bar {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    padding: 0 var(--spacing-lg);
+    gap: var(--spacing-xl);
+    background-color: var(--color-bg-panel);
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+.transport-section {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.transport-section-left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.transport-section-center {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    flex: 1;
+}
+
+.transport-section-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+/* ============================================
+   PROJECT INFO
+   ============================================ */
+
+.project-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.project-name {
+    font-size: var(--font-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin-left: var(--spacing-md);
+}
+
+.project-unsaved {
+    display: none;
+    font-size: var(--font-xs);
+    color: var(--color-accent-warning);
+    opacity: 0.7;
+}
+
+.project-unsaved.active {
+    display: inline;
+}
+
+/* ============================================
+   TRANSPORT BUTTONS
+   ============================================ */
+
+.transport-btn {
+    height: 36px;
+    min-width: 36px;
+    padding: 0 var(--spacing-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    font-size: var(--font-base);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.transport-btn:hover {
+    border-color: var(--color-primary);
+    background-color: var(--color-bg-active);
+}
+
+.transport-btn.active {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+    box-shadow: 0 0 12px rgba(0, 136, 255, 0.4);
+}
+
+.transport-btn-play {
+    height: 44px;
+    min-width: 44px;
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+    font-size: var(--font-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.transport-btn-play:hover {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+    box-shadow: 0 0 16px rgba(0, 136, 255, 0.5);
+}
+
+.transport-btn-record {
+    background-color: var(--color-accent-record);
+    border-color: var(--color-accent-record);
+    color: white;
+}
+
+.transport-btn-record.active {
+    animation: pulse 0.5s ease-in-out infinite;
+}
+
+/* ============================================
+   TIME DISPLAYS
+   ============================================ */
+
+.time-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg-secondary);
+    font-family: var(--font-mono);
+    font-size: var(--font-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-primary);
+}
+
+.beat-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg-secondary);
+    font-family: var(--font-mono);
+    font-size: var(--font-sm);
+    color: var(--color-text-secondary);
+}
+
+/* ============================================
+   TEMPO CONTROL
+   ============================================ */
+
+.tempo-control {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.tempo-label {
+    font-size: var(--font-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tempo-input {
+    width: 60px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    font-family: var(--font-mono);
+    font-size: var(--font-base);
+    text-align: center;
+}
+
+.tempo-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background-color: var(--color-bg-active);
+}
+
+/* ============================================
+   TRANSPORT INDICATORS
+   ============================================ */
+
+.transport-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-sm);
+    color: var(--color-text-secondary);
+}
+
+.transport-indicator::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: transparent;
+}
+
+.transport-indicator.active::before {
+    background-color: var(--color-accent-record);
+    animation: pulse 0.5s ease-in-out infinite;
+}
+
+/* ============================================
+   METRONOME & LOOP CONTROLS
+   ============================================ */
+
+.loop-control {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.loop-control input {
+    width: 60px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.metronome-control {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.metronome-btn {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-xs);
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.metronome-btn:hover {
+    border-color: var(--color-primary);
+    background-color: var(--color-bg-active);
+}
+
+.metronome-btn.active {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}

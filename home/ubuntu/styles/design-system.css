@@ -1,0 +1,292 @@
+/* ============================================
+   DESIGN SYSTEM - Global CSS Variables
+   ============================================ */
+
+:root {
+    /* Colors - Professional DAW Palette */
+    --color-primary: #4db8ff;      /* Bright cyan/blue accent */
+    --color-primary-dark: #2a94d8; /* Darker blue for active */
+    --color-primary-light: #7fd4ff;/* Light cyan for hover */
+    --color-secondary: #ffb84d;    /* Warm orange accent */
+    --color-tertiary: #8aff80;     /* Fresh green accent */
+    
+    /* Backgrounds - Dark theme with depth */
+    --color-bg-main: #0a0a0a;       /* Darkest - main bg */
+    --color-bg-secondary: #141414;  /* Panel bg */
+    --color-bg-tertiary: #1a1a1a;   /* Deeper secondary */
+    --color-bg-quaternary: #202020; /* Header/footer bg */
+    --color-bg-hover: #2a2a2a;      /* Hover state */
+    --color-bg-active: #333333;     /* Active/pressed state */
+    --color-bg-panel: #0f0f0f;      /* Component panels */
+    
+    /* Text - High contrast for readability */
+    --color-text-primary: #ffffff;   /* Primary text - pure white */
+    --color-text-secondary: #c0c0c0; /* Secondary text - light gray */
+    --color-text-muted: #808080;     /* Disabled/muted text */
+    --color-text-tertiary: #606060;  /* Very dim text */
+    
+    /* Borders & Dividers */
+    --color-border: #2a2a2a;         /* Primary border */
+    --color-border-subtle: #1f1f1f;  /* Subtle border */
+    --color-grid: #1a1a1a;           /* Grid background */
+    --color-separator: #252525;      /* Panel separator */
+    
+    /* Accent Colors - Semantic */
+    --color-accent-primary: #4db8ff;   /* Primary action */
+    --color-accent-mute: #ff6b35;      /* Mute indicator */
+    --color-accent-solo: #ffd700;      /* Solo indicator */
+    --color-accent-record: #ff3333;    /* Record active */
+    --color-accent-warning: #ffb84d;   /* Warning state */
+    --color-accent-error: #ff5555;     /* Error state */
+    --color-accent-success: #8aff80;   /* Success state */
+    --color-accent-info: #4db8ff;      /* Info state */
+    
+    /* Typography */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    
+    --font-xs: 10px;
+    --font-sm: 12px;
+    --font-base: 14px;
+    --font-md: 16px;
+    --font-lg: 18px;
+    --font-xl: 20px;
+    --font-2xl: 24px;
+    
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 12px;
+    --spacing-lg: 16px;
+    --spacing-xl: 24px;
+    --spacing-2xl: 32px;
+    
+    /* Shadows - Depth layering */
+    --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.5);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.6);
+    --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.7);
+    --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.8);
+    --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+    --shadow-inset-light: inset 0 1px 2px rgba(255, 255, 255, 0.05);
+    --glow-primary: 0 0 20px rgba(77, 184, 255, 0.3);
+    --glow-record: 0 0 16px rgba(255, 51, 51, 0.4);
+    
+    /* Border Radius */
+    --radius-xs: 2px;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+    
+    /* Transitions - Smooth interactions */
+    --transition-fast: 80ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ============================================
+   RESET & BASE STYLES
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-base);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-main);
+    line-height: 1.5;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-bg-active);
+    border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-secondary);
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.gap-xs { gap: var(--spacing-xs); }
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+.gap-lg { gap: var(--spacing-lg); }
+.gap-xl { gap: var(--spacing-xl); }
+
+.p-xs { padding: var(--spacing-xs); }
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+.p-xl { padding: var(--spacing-xl); }
+
+.px-xs { padding-left: var(--spacing-xs); padding-right: var(--spacing-xs); }
+.px-sm { padding-left: var(--spacing-sm); padding-right: var(--spacing-sm); }
+.px-md { padding-left: var(--spacing-md); padding-right: var(--spacing-md); }
+.px-lg { padding-left: var(--spacing-lg); padding-right: var(--spacing-lg); }
+
+.py-xs { padding-top: var(--spacing-xs); padding-bottom: var(--spacing-xs); }
+.py-sm { padding-top: var(--spacing-sm); padding-bottom: var(--spacing-sm); }
+.py-md { padding-top: var(--spacing-md); padding-bottom: var(--spacing-md); }
+.py-lg { padding-top: var(--spacing-lg); padding-bottom: var(--spacing-lg); }
+
+.text-xs { font-size: var(--font-xs); }
+.text-sm { font-size: var(--font-sm); }
+.text-base { font-size: var(--font-base); }
+.text-md { font-size: var(--font-md); }
+.text-lg { font-size: var(--font-lg); }
+
+.font-regular { font-weight: var(--font-weight-regular); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+
+.rounded-xs { border-radius: var(--radius-xs); }
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.no-select {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.hidden { display: none !important; }
+.invisible { visibility: hidden; }
+.disabled { opacity: 0.5; pointer-events: none; }
+.active { opacity: 1; }
+
+/* ============================================
+   FOCUS STATES
+   ============================================ */
+
+:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

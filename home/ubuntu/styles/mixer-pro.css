@@ -1,0 +1,443 @@
+/* ============================================
+   PROFESSIONAL MIXER PANEL
+   ============================================ */
+
+.mixer-panel {
+    display: flex;
+    flex-direction: column;
+    height: 200px;
+    background-color: var(--color-bg-secondary);
+    border-top: 1px solid var(--color-border);
+    
+    overflow: hidden;
+}
+
+/* ============================================
+   MIXER HEADER
+   ============================================ */
+
+.mixer-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: linear-gradient(135deg, var(--color-bg-quaternary), var(--color-bg-tertiary));
+    border-bottom: 1px solid var(--color-border);
+    
+    font-size: var(--font-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+}
+
+/* ============================================
+   MIXER CONTENT
+   ============================================ */
+
+.mixer-content {
+    display: flex;
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    
+    background: linear-gradient(180deg, var(--color-bg-main), var(--color-bg-panel));
+    padding: var(--spacing-md);
+    gap: var(--spacing-md);
+}
+
+.mixer-content::-webkit-scrollbar {
+    height: 6px;
+}
+
+.mixer-content::-webkit-scrollbar-track {
+    background: var(--color-bg-panel);
+}
+
+.mixer-content::-webkit-scrollbar-thumb {
+    background: var(--color-bg-active);
+}
+
+.mixer-content::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-secondary);
+}
+
+/* ============================================
+   MIXER CHANNEL
+   ============================================ */
+
+.mixer-channel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    
+    width: 80px;
+    min-width: 80px;
+    
+    padding: var(--spacing-md);
+    
+    background: linear-gradient(135deg, var(--color-bg-tertiary), var(--color-bg-quaternary));
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    
+    box-shadow: var(--shadow-md);
+    
+    transition: all var(--transition-base);
+}
+
+.mixer-channel:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--glow-primary), var(--shadow-md);
+}
+
+/* Channel Header */
+
+.mixer-channel-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    align-items: center;
+}
+
+.mixer-channel-name {
+    font-size: var(--font-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    text-align: center;
+    
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    
+    cursor: pointer;
+    user-select: none;
+    
+    transition: color var(--transition-base);
+}
+
+.mixer-channel-name:hover {
+    color: var(--color-primary);
+}
+
+/* Color Tag */
+
+.mixer-color-tag {
+    width: 100%;
+    height: 2px;
+    border-radius: 1px;
+    background-color: var(--color-primary);
+}
+
+.mixer-color-tag.orange { background-color: var(--color-secondary); }
+.mixer-color-tag.green { background-color: var(--color-tertiary); }
+
+/* ============================================
+   FADER - Vertical Volume Control
+   ============================================ */
+
+.mixer-fader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex: 1;
+}
+
+.mixer-fader {
+    width: 6px;
+    height: 100px;
+    
+    appearance: slider-vertical;
+    -webkit-appearance: slider-vertical;
+    writing-mode: bt-lr;
+    
+    background: linear-gradient(0deg, var(--color-bg-active), var(--color-bg-hover));
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    
+    cursor: pointer;
+    
+    box-shadow: var(--shadow-inset);
+}
+
+.mixer-fader::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    
+    width: 16px;
+    height: 6px;
+    
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+    border: 1px solid var(--color-primary-dark);
+    border-radius: var(--radius-sm);
+    
+    cursor: pointer;
+    
+    box-shadow: var(--glow-primary), var(--shadow-md);
+    
+    transition: all var(--transition-fast);
+}
+
+.mixer-fader::-webkit-slider-thumb:hover {
+    width: 18px;
+    box-shadow: var(--glow-primary), var(--shadow-lg);
+}
+
+.mixer-fader::-moz-range-thumb {
+    width: 16px;
+    height: 6px;
+    
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+    border: 1px solid var(--color-primary-dark);
+    border-radius: var(--radius-sm);
+    
+    cursor: pointer;
+    
+    box-shadow: var(--glow-primary), var(--shadow-md);
+}
+
+/* Fader Value Display */
+
+.fader-value {
+    font-size: var(--font-xs);
+    font-family: var(--font-mono);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    
+    text-align: center;
+    min-width: 40px;
+    
+    transition: color var(--transition-fast);
+}
+
+/* ============================================
+   METER - Level Indicator
+   ============================================ */
+
+.mixer-meter {
+    width: 100%;
+    height: 60px;
+    
+    background-color: var(--color-bg-panel);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    
+    position: relative;
+    overflow: hidden;
+    
+    box-shadow: var(--shadow-inset);
+}
+
+.mixer-meter-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    
+    background: linear-gradient(0deg, 
+        #ff5555 0%,
+        #ffb84d 50%,
+        #8aff80 100%
+    );
+    
+    transition: height 0.05s linear;
+    
+    box-shadow: 0 0 8px rgba(77, 184, 255, 0.3);
+}
+
+.mixer-meter-peak {
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background-color: var(--color-accent-record);
+    
+    box-shadow: 0 0 4px var(--color-accent-record);
+}
+
+/* ============================================
+   CHANNEL BUTTONS
+   ============================================ */
+
+.mixer-buttons {
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+.mixer-btn-mute,
+.mixer-btn-solo {
+    flex: 1;
+    height: 24px;
+    
+    padding: 0;
+    
+    background-color: var(--color-bg-active);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    
+    font-size: var(--font-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-secondary);
+    
+    cursor: pointer;
+    
+    transition: all var(--transition-fast);
+}
+
+.mixer-btn-mute:hover,
+.mixer-btn-solo:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.mixer-btn-mute.active {
+    background-color: var(--color-accent-mute);
+    border-color: var(--color-accent-mute);
+    color: #fff;
+    box-shadow: 0 0 12px rgba(255, 107, 53, 0.3);
+}
+
+.mixer-btn-solo.active {
+    background-color: var(--color-accent-solo);
+    border-color: var(--color-accent-solo);
+    color: #000;
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+}
+
+/* ============================================
+   MASTER CHANNEL
+   ============================================ */
+
+.mixer-master {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    
+    width: 100px;
+    min-width: 100px;
+    
+    padding: var(--spacing-md);
+    
+    background: linear-gradient(135deg, #2a1f3f, #1f1530);
+    border: 2px solid var(--color-accent-solo);
+    border-radius: var(--radius-lg);
+    
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2), var(--shadow-lg);
+}
+
+.mixer-master-label {
+    font-size: var(--font-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-accent-solo);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.mixer-master .mixer-meter {
+    border-color: var(--color-accent-solo);
+}
+
+.mixer-master .fader-value {
+    color: var(--color-accent-solo);
+}
+
+/* ============================================
+   PAN KNOB
+   ============================================ */
+
+.mixer-pan {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.mixer-knob {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    
+    background: conic-gradient(
+        from 225deg,
+        var(--color-bg-active) 0deg,
+        var(--color-primary) 180deg,
+        var(--color-bg-active) 360deg
+    );
+    
+    border: 2px solid var(--color-border);
+    box-shadow: var(--shadow-md), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+    
+    position: relative;
+    cursor: pointer;
+    
+    transition: all var(--transition-fast);
+}
+
+.mixer-knob:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--glow-primary), var(--shadow-lg), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.mixer-knob::before {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 14px;
+    background-color: var(--color-primary);
+    border-radius: 1.5px;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%) rotate(var(--knob-rotation, 0deg));
+    
+    box-shadow: var(--glow-primary);
+}
+
+.mixer-knob-label {
+    font-size: var(--font-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.mixer-knob-value {
+    font-size: var(--font-xs);
+    font-family: var(--font-mono);
+    color: var(--color-primary);
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+
+.mixer-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    
+    color: var(--color-text-muted);
+    font-size: var(--font-md);
+    font-weight: var(--font-weight-medium);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 1200px) {
+    .mixer-channel {
+        width: 72px;
+        min-width: 72px;
+    }
+    
+    .mixer-master {
+        width: 90px;
+        min-width: 90px;
+    }
+    
+    .mixer-fader {
+        height: 80px;
+    }
+    
+    .mixer-meter {
+        height: 50px;
+    }
+}
