@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "project": "electron-daw-ai-layer",
+  "integrations": [
+    {
+      "name": "audiocraft-musicgen",
+      "repo": "https://github.com/facebookresearch/audiocraft",
+      "runtime": "python",
+      "entry": "ai/adapters/audiocraft.adapter.js",
+      "status": "scaffolded"
+    },
+    {
+      "name": "riffusion",
+      "repo": "https://github.com/riffusion/riffusion",
+      "runtime": "python",
+      "entry": "ai/adapters/riffusion.adapter.js",
+      "status": "scaffolded"
+    },
+    {
+      "name": "magenta-js",
+      "repo": "https://github.com/magenta/magenta-js",
+      "runtime": "renderer-js",
+      "entry": "ai/adapters/magenta.adapter.js",
+      "status": "scaffolded"
+    },
+    {
+      "name": "tone-js",
+      "repo": "https://github.com/Tonejs/Tone.js",
+      "runtime": "renderer-js",
+      "entry": "ai/sequencers/tone-sequencer.service.js",
+      "status": "scaffolded"
+    },
+    {
+      "name": "scribbletune",
+      "repo": "https://github.com/scribbletune/scribbletune",
+      "runtime": "node-js",
+      "entry": "ai/sequencers/scribbletune.service.js",
+      "status": "scaffolded"
+    },
+    {
+      "name": "tonal",
+      "repo": "https://github.com/tonaljs/tonal",
+      "runtime": "node-js",
+      "entry": "ai/theory/tonal.service.js",
+      "status": "scaffolded"
+    },
+    {
+      "name": "langchain-js",
+      "repo": "https://github.com/langchain-ai/langchainjs",
+      "runtime": "node-js",
+      "entry": "ai/services/langchain-agent.service.js",
+      "status": "scaffolded"
+    },
+    {
+      "name": "local-advisor-rules",
+      "repo": "local",
+      "runtime": "node-js",
+      "entry": "ai/services/local-advisor.service.js",
+      "status": "scaffolded"
+    },
+    {
+      "name": "meyda",
+      "repo": "https://github.com/meyda/meyda",
+      "runtime": "node-js",
+      "entry": "ai/analysis/meyda-analyzer.service.js",
+      "status": "scaffolded"
+    },
+    {
+      "name": "dsp-js",
+      "repo": "https://github.com/corbanbrook/dsp.js",
+      "runtime": "node-js",
+      "entry": "ai/analysis/dsp.service.js",
+      "status": "scaffolded"
+    }
+  ],
+  "storagePolicy": {
+    "audioFiles": "disk-only",
+    "mongodb": "metadata-only"
+  }
+}

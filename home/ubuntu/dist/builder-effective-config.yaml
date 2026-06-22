@@ -1,0 +1,15 @@
+directories:
+  output: dist
+  buildResources: build
+appId: com.example.electron.daw
+productName: Electron DAW
+files:
+  - filter:
+      - '**/*'
+mac:
+  target: dmg
+win:
+  target: nsis
+linux:
+  target: AppImage
+electronVersion: 20.3.12

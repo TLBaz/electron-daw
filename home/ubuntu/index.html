@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Electron DAW - Professional Digital Audio Workstation</title>
+    
+    <!-- Professional CSS Files - Loaded in order -->
+    <link rel="stylesheet" href="styles/design-system.css" />
+    <link rel="stylesheet" href="styles/components-pro.css" />
+    <link rel="stylesheet" href="styles/transport-pro.css" />
+    <link rel="stylesheet" href="styles/browser-pro.css" />
+    <link rel="stylesheet" href="styles/arrangement-pro.css" />
+    <link rel="stylesheet" href="styles/mixer-pro.css" />
+    <link rel="stylesheet" href="styles/inspector-pro.css" />
+    <link rel="stylesheet" href="styles/layout-pro.css" />
+</head>
+<body>
+    <div class="daw-container">
+        <!-- ================================================
+             TRANSPORT BAR - Top Control Section
+             ================================================ -->
+        <header class="transport-bar">
+            <!-- Project Info -->
+            <div class="project-info">
+                <button class="btn btn-sm" id="btn-new" title="New Project (Ctrl+N)">📄</button>
+                <button class="btn btn-sm" id="btn-open" title="Open Project">📁</button>
+                <button class="btn btn-sm" id="btn-save" title="Save Project (Ctrl+S)">💾</button>
+                <span class="project-name" id="project-name">Beats2026</span>
+                <div class="project-unsaved" id="project-unsaved"></div>
+            </div>
+
+            <!-- Transport Controls -->
+            <div class="transport-controls">
+                <button class="transport-btn transport-btn-play" id="btn-play" title="Play (Space)">▶</button>
+                <button class="transport-btn transport-btn-stop" id="btn-stop" title="Stop">⏹</button>
+                <button class="transport-btn transport-btn-loop" id="btn-loop" title="Loop">🔄</button>
+                <button class="transport-btn transport-btn-record" id="btn-record" title="Record (R)">⏺</button>
+            </div>
+
+            <!-- Separator -->
+            <div class="transport-separator"></div>
+
+            <!-- Time Display -->
+            <div class="transport-time">
+                <div class="time-display-group">
+                    <span class="time-label">Time</span>
+                    <span class="time-display" id="time-display">00:00.00</span>
+                </div>
+                <div class="time-display-group">
+                    <span class="time-label">Beat</span>
+                    <span class="beat-display" id="beat-display">1.1</span>
+                </div>
+            </div>
+
+            <!-- Tempo Control -->
+            <div class="tempo-control">
+                <label class="tempo-label">Tempo</label>
+                <input 
+                    type="number" 
+                    class="tempo-input" 
+                    id="tempo-input" 
+                    value="120" 
+                    min="20" 
+                    max="300" 
+                    title="BPM (Beats Per Minute)"
+                />
+            </div>
+
+            <!-- Metronome & Extras -->
+            <div class="transport-extras">
+                <button class="metronome-btn" id="btn-metronome" title="Toggle Metronome">🔊</button>
+            </div>
+
+            <!-- Spacer -->
+            <div class="transport-spacer"></div>
+
+            <!-- Right Controls -->
+            <div class="transport-right">
+                <button class="settings-btn" id="btn-settings" title="Settings">⚙️</button>
+                <button class="menu-btn" id="btn-menu" title="Menu">☰</button>
+            </div>
+        </header>
+
+        <!-- ================================================
+             MAIN LAYOUT - Left + Center + Right
+             ================================================ -->
+        <div class="daw-main">
+            <!-- LEFT PANEL: Browser -->
+            <aside class="daw-left browser-panel" id="browser-panel">
+                <div class="browser-header">🗁 Browser</div>
+                
+                <!-- Browser Tabs -->
+                <div class="browser-tabs">
+                    <button class="browser-tab active" data-tab="projects" title="Projects">Projects</button>
+                    <button class="browser-tab" data-tab="samples" title="Samples">Samples</button>
+                    <button class="browser-tab" data-tab="instruments" title="Instruments">Instruments</button>
+                </div>
+
+                <!-- Browser Content -->
+                <div class="browser-content">
+                    <!-- Projects Tab -->
+                    <div class="browser-content-item active" id="tab-projects">
+                        <div class="tree-view" id="projects-tree">
+                            <div class="tree-item">
+                                <button class="tree-toggle">▼</button>
+                                <span class="tree-icon">📁</span>
+                                <span>My Projects</span>
+                            </div>
+                            <div class="tree-children">
+                                <div class="tree-item">
+                                    <span class="tree-icon">🎵</span>
+                                    <span>Demo Project 1</span>
+                                </div>
+                                <div class="tree-item">
+                                    <span class="tree-icon">🎵</span>
+                                    <span>Demo Project 2</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Samples Tab -->
+                    <div class="browser-content-item" id="tab-samples">
+                        <div class="browser-search">
+                            <input 
+                                type="search" 
+                                class="search-input" 
+                                placeholder="Search samples..." 
+                                id="sample-search"
+                            />
+                        </div>
+                        <div class="tree-view" id="samples-tree">
+                            <div class="sample-item draggable" data-file="sample1.wav">
+                                <span class="sample-icon">🎵</span>
+                                <span>Kick_Deep.wav</span>
+                            </div>
+                            <div class="sample-item draggable" data-file="sample2.wav">
+                                <span class="sample-icon">🎵</span>
+                                <span>Snare_Crisp.wav</span>
+                            </div>
+                            <div class="sample-item draggable" data-file="sample3.wav">
+                                <span class="sample-icon">🎵</span>
+                                <span>Hat_Closed.wav</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instruments Tab -->
+                    <div class="browser-content-item" id="tab-instruments">
+                        <div class="tree-view" id="instruments-tree">
+                            <div class="tree-item">
+                                <span class="tree-icon">🎹</span>
+                                <span>Synthesizer</span>
+                            </div>
+                            <div class="tree-item">
+                                <span class="tree-icon">🎹</span>
+                                <span>Piano</span>
+                            </div>
+                            <div class="tree-item">
+                                <span class="tree-icon">🎹</span>
+                                <span>Strings</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Browser Footer -->
+                <div class="browser-footer">
+                    <button class="btn btn-sm" id="btn-load-samples" title="Load Samples Directory">Load</button>
+                </div>
+            </aside>
+
+            <!-- CENTER PANEL: Arrangement + Mixer -->
+            <main class="daw-center">
+                <!-- Arrangement View -->
+                <section class="daw-arrangement arrangement">
+                    <!-- Ruler / Timeline -->
+                    <div class="ruler" id="ruler">
+                        <div class="ruler-markers" id="ruler-markers">
+                            <div class="bar-marker" style="width: 120px;">1</div>
+                            <div class="beat-marker" style="width: 30px;"></div>
+                            <div class="beat-marker" style="width: 30px;"></div>
+                            <div class="beat-marker" style="width: 30px;"></div>
+                            <div class="bar-marker" style="width: 120px;">2</div>
+                            <div class="beat-marker" style="width: 30px;"></div>
+                            <div class="beat-marker" style="width: 30px;"></div>
+                            <div class="beat-marker" style="width: 30px;"></div>
+                        </div>
+                        <div class="playhead" id="playhead" style="left: 0;"></div>
+                    </div>
+
+                    <!-- Tracks Container -->
+                    <div class="tracks-container">
+                        <!-- Track Headers -->
+                        <div class="track-headers">
+                            <div class="track-header" id="track-header-1">
+                                <div class="track-name">Drums</div>
+                                <div class="track-controls">
+                                    <button class="track-btn track-btn-mute" title="Mute">M</button>
+                                    <button class="track-btn track-btn-solo" title="Solo">S</button>
+                                </div>
+                            </div>
+                            <div class="track-header" id="track-header-2">
+                                <div class="track-name">Bass</div>
+                                <div class="track-controls">
+                                    <button class="track-btn track-btn-mute" title="Mute">M</button>
+                                    <button class="track-btn track-btn-solo" title="Solo">S</button>
+                                </div>
+                            </div>
+                            <div class="track-header" id="track-header-3">
+                                <div class="track-name">Lead</div>
+                                <div class="track-controls">
+                                    <button class="track-btn track-btn-mute" title="Mute">M</button>
+                                    <button class="track-btn track-btn-solo" title="Solo">S</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tracks Grid -->
+                        <div style="flex: 1; overflow: auto;">
+                            <!-- Track 1: Drums -->
+                            <div class="track">
+                                <div class="track-clips" id="track-1-clips">
+                                    <div class="snap-grid"></div>
+                                    <div class="clip clip-purple draggable" style="left: 0; width: 120px;">Kick</div>
+                                    <div class="clip clip-orange draggable" style="left: 150px; width: 120px;">Snare</div>
+                                    <div class="clip clip-green draggable" style="left: 300px; width: 120px;">Hat</div>
+                                </div>
+                            </div>
+
+                            <!-- Track 2: Bass -->
+                            <div class="track">
+                                <div class="track-clips" id="track-2-clips">
+                                    <div class="snap-grid"></div>
+                                    <div class="clip clip-blue draggable" style="left: 0; width: 240px;">Bass Line</div>
+                                    <div class="clip clip-blue draggable" style="left: 300px; width: 240px;">Bass Fill</div>
+                                </div>
+                            </div>
+
+                            <!-- Track 3: Lead -->
+                            <div class="track">
+                                <div class="track-clips" id="track-3-clips">
+                                    <div class="snap-grid"></div>
+                                    <div class="clip clip-red draggable" style="left: 120px; width: 180px;">Melody</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Mixer / Bottom Panel -->
+                <section class="daw-mixer-container mixer-panel" id="mixer-panel">
+                    <div class="mixer-header">🎚️ Mixer</div>
+                    <div class="mixer-content" id="mixer-content">
+                        <!-- Mixer Channels -->
+                        <div class="mixer-channel">
+                            <div class="mixer-channel-header">
+                                <div class="mixer-channel-name">Drums</div>
+                                <div class="mixer-color-tag"></div>
+                            </div>
+                            <div class="mixer-fader-container">
+                                <input type="range" class="mixer-fader vertical" min="-60" max="12" value="0" title="Volume" />
+                                <div class="fader-value" id="fader-value-1">0 dB</div>
+                            </div>
+                            <div class="mixer-meter">
+                                <div class="mixer-meter-fill" style="height: 40%;"></div>
+                            </div>
+                            <div class="mixer-buttons">
+                                <button class="mixer-btn-mute" title="Mute">M</button>
+                                <button class="mixer-btn-solo" title="Solo">S</button>
+                            </div>
+                        </div>
+
+                        <div class="mixer-channel">
+                            <div class="mixer-channel-header">
+                                <div class="mixer-channel-name">Bass</div>
+                                <div class="mixer-color-tag orange"></div>
+                            </div>
+                            <div class="mixer-fader-container">
+                                <input type="range" class="mixer-fader vertical" min="-60" max="12" value="-3" title="Volume" />
+                                <div class="fader-value" id="fader-value-2">-3 dB</div>
+                            </div>
+                            <div class="mixer-meter">
+                                <div class="mixer-meter-fill" style="height: 35%;"></div>
+                            </div>
+                            <div class="mixer-buttons">
+                                <button class="mixer-btn-mute" title="Mute">M</button>
+                                <button class="mixer-btn-solo" title="Solo">S</button>
+                            </div>
+                        </div>
+
+                        <div class="mixer-channel">
+                            <div class="mixer-channel-header">
+                                <div class="mixer-channel-name">Lead</div>
+                                <div class="mixer-color-tag green"></div>
+                            </div>
+                            <div class="mixer-fader-container">
+                                <input type="range" class="mixer-fader vertical" min="-60" max="12" value="-6" title="Volume" />
+                                <div class="fader-value" id="fader-value-3">-6 dB</div>
+                            </div>
+                            <div class="mixer-meter">
+                                <div class="mixer-meter-fill" style="height: 30%;"></div>
+                            </div>
+                            <div class="mixer-buttons">
+                                <button class="mixer-btn-mute" title="Mute">M</button>
+                                <button class="mixer-btn-solo" title="Solo">S</button>
+                            </div>
+                        </div>
+
+                        <!-- Master Channel -->
+                        <div class="mixer-master">
+                            <div class="mixer-master-label">Master</div>
+                            <div class="mixer-fader-container">
+                                <input type="range" class="mixer-fader vertical" min="-60" max="0" value="-6" title="Master Volume" />
+                                <div class="fader-value" id="fader-value-master">-6 dB</div>
+                            </div>
+                            <div class="mixer-meter">
+                                <div class="mixer-meter-fill" style="height: 45%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- RIGHT PANEL: Inspector -->
+            <aside class="daw-right inspector-panel" id="inspector-panel">
+                <div class="inspector-header">🔍 Inspector</div>
+                
+                <div class="inspector-content" id="inspector-content">
+                    <!-- Track Properties -->
+                    <div class="inspector-section">
+                        <div class="inspector-section-title">Track Properties</div>
+                        
+                        <div class="property-row">
+                            <label class="property-label">Track Name</label>
+                            <input type="text" class="property-input" value="Drums" placeholder="Track name" />
+                        </div>
+
+                        <div class="property-row">
+                            <label class="property-label">Volume (dB)</label>
+                            <div class="property-slider-group">
+                                <input type="range" class="property-slider" min="-60" max="12" value="0" title="Track volume slider" />
+                                <span class="property-value" id="volume-value">0</span>
+                            </div>
+                        </div>
+
+                        <div class="property-row">
+                            <label class="property-label">Pan</label>
+                            <div class="property-slider-group">
+                                <input type="range" class="property-slider" min="-100" max="100" value="0" title="Track pan slider" />
+                                <span class="property-value" id="pan-value">C</span>
+                            </div>
+                        </div>
+
+                        <div class="property-row">
+                            <label class="property-label">Color</label>
+                            <div class="color-picker">
+                                <div class="color-option color-blue selected"></div>
+                                <div class="color-option color-orange"></div>
+                                <div class="color-option color-green"></div>
+                                <div class="color-option color-purple"></div>
+                                <div class="color-option color-red"></div>
+                                <div class="color-option color-yellow"></div>
+                                <div class="color-option color-pink"></div>
+                                <div class="color-option color-cyan"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clip Properties -->
+                    <div class="inspector-section">
+                        <div class="inspector-section-title">Clip Properties</div>
+                        
+                        <div class="property-row">
+                            <label class="property-label">Clip Name</label>
+                            <input type="text" class="property-input" value="Kick" placeholder="Clip name" disabled />
+                        </div>
+
+                        <div class="property-row">
+                            <label class="property-label">Duration</label>
+                            <span class="track-property-value">— (No clip selected)</span>
+                        </div>
+
+                        <div class="property-row">
+                            <label class="property-label">Start Time (Beat)</label>
+                            <span class="track-property-value">— (No clip selected)</span>
+                        </div>
+                    </div>
+
+                    <!-- Master Output -->
+                    <div class="inspector-section">
+                        <div class="inspector-section-title">Master Output</div>
+                        
+                        <div class="property-row">
+                            <label class="property-label">Master Volume (dB)</label>
+                            <div class="property-slider-group">
+                                <input type="range" class="property-slider" min="-60" max="0" value="-6" title="Master volume slider" />
+                                <span class="property-value" id="master-volume">-6</span>
+                            </div>
+                        </div>
+
+                        <div class="property-row">
+                            <label class="property-label">Limiter</label>
+                            <label class="toggle-switch active" id="limiter-toggle">
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="inspector-section">
+                        <div class="inspector-section-title">AI Assistant</div>
+
+                        <div class="property-row">
+                            <label class="property-label">Command</label>
+                            <select class="property-select" id="ai-command" title="AI command selection">
+                                <option value="generate-drum-pattern">Generate drum pattern in style</option>
+                                <option value="create-bassline">Create bassline in key</option>
+                                <option value="create-melody-from-chords">Create melody from chords</option>
+                                <option value="generate-full-idea">Generate full 8-bar idea</option>
+                                <option value="explain-mix-needs">Explain what mix needs</option>
+                                <option value="fix-timing">Fix timing issues in loop</option>
+                            </select>
+                        </div>
+
+                        <div class="property-row">
+                            <label class="property-label">Prompt / Context</label>
+                            <textarea class="property-input ai-textarea" id="ai-prompt" placeholder="e.g. Generate a punchy house drum pattern, 4 bars"></textarea>
+                        </div>
+
+                        <div class="property-row">
+                            <label class="property-label">Target Track</label>
+                            <select class="property-select" id="ai-target-track" title="Target track selection">
+                                <option value="track-1">Drums</option>
+                                <option value="track-2">Bass</option>
+                                <option value="track-3">Lead</option>
+                            </select>
+                        </div>
+
+                        <div class="property-row ai-actions-row">
+                            <button class="inspector-button" id="btn-ai-run">Run AI Task</button>
+                        </div>
+
+                        <div class="property-row">
+                            <label class="property-label">Result</label>
+                            <div class="ai-result" id="ai-result">Ready.</div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- ================================================
+         SCRIPTS - Load in correct order
+         ================================================ -->
+    <script src="audio-engine.js"></script>
+    <script src="audio-loader.js"></script>
+    <script src="transport.js"></script>
+    <script src="ruler.js"></script>
+    <script src="sample-browser.js"></script>
+    <script src="waveform-renderer.js"></script>
+    <script src="project-manager.js"></script>
+    <script src="sequencer.js"></script>
+    <script src="sequencer-panel.js"></script>
+    <script src="ai/renderer/ai-client.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+
+
+

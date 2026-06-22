@@ -1,0 +1,15 @@
+
+{ 
+  "appId": "com.example.electron.daw", 
+  "productName": "Electron DAW", 
+  "files": ["**/*"], 
+  "mac": { 
+    "target": "dmg" 
+  }, 
+  "win": { 
+    "target": "nsis" 
+  }, 
+  "linux": { 
+    "target": "AppImage" 
+  } 
+}
