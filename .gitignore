@@ -1,0 +1,13 @@
+# ===== Build artifacts / packaged Electron output =====
+home/ubuntu/dist/
+home/ubuntu/dist-*/
+dist/
+dist-*/
+
+# ===== Node modules =====
+node_modules/
+home/ubuntu/node_modules/
+
+# ===== OS files =====
+.DS_Store
+Thumbs.db
