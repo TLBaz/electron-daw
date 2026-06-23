@@ -6,7 +6,7 @@ class RiffusionAdapter {
   constructor(options = {}) {
     this.pythonBin = options.pythonBin || 'python';
     this.scriptPath = options.scriptPath
-      || path.join(process.cwd(), 'ai', 'python', 'riffusion_generate.py');
+      || path.join(__dirname, '..', 'python', 'riffusion_generate.py');
     this.storage = options.storage || new FileStorageService();
   }
 

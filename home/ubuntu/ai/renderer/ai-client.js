@@ -17,12 +17,44 @@ class AIClient {
     });
   }
 
+  makeTrapDrumPattern(prompt = 'make a trap drum pattern', bars = 4) {
+    return this.run('make-trap-drum-pattern', {
+      prompt,
+      bars,
+    });
+  }
+
   generateBassline(key = 'F', mode = 'minor', style = 'dark') {
     return this.run('create-bassline', { key, mode, style });
   }
 
+  generateBasslineInKey(key = 'F', mode = 'minor', style = 'dark rolling bass', prompt = '') {
+    return this.run('generate-bassline-in-key', {
+      key,
+      mode,
+      style,
+      prompt,
+    });
+  }
+
   generateMelody(chords = ['Fm', 'Db', 'Ab', 'Eb'], prompt = 'melodic lead') {
     return this.run('create-melody-from-chords', { chords, prompt, duration: 8 });
+  }
+
+  create8BarMelody(chords = ['Fm', 'Db', 'Ab', 'Eb'], prompt = 'Create an 8-bar melody with clear motifs and variation', duration = 16) {
+    return this.run('create-8-bar-melody', {
+      chords,
+      prompt,
+      duration,
+    });
+  }
+
+  generateChordProgression(prompt = '') {
+    return this.run('generate-chord-progression', { prompt });
+  }
+
+  aiArrangementSuggestions(prompt = '') {
+    return this.run('ai-arrangement-suggestions', { prompt });
   }
 
   explainMixNeeds(context) {

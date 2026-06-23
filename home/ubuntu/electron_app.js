@@ -171,10 +171,24 @@ ipcMain.handle('ai-list-commands', async () => {
     return {
         success: true,
         commands: [
+            // Drum generation
             'generate-drum-pattern',
+            'make-trap-drum-pattern',
+
+            // Bass generation
             'create-bassline',
+            'generate-bassline-in-key',
+
+            // Melody / harmony
             'create-melody-from-chords',
+            'create-8-bar-melody',
+            'generate-chord-progression',
+
+            // Full track / arrangement
             'generate-full-idea',
+            'ai-arrangement-suggestions',
+
+            // Conversational / diagnostics
             'explain-mix-needs',
             'fix-timing',
         ],

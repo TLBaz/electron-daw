@@ -358,24 +358,69 @@ class UIController {
 
     buildAIPayload(command, prompt) {
         switch (command) {
+            // -------------------- Drums --------------------
             case 'generate-drum-pattern':
                 return { prompt: prompt || 'Generate a modern punchy drum groove', bars: 4, duration: 8 };
+
+            case 'make-trap-drum-pattern':
+                return { prompt: prompt || 'make a trap drum pattern', bars: 4 };
+
+            // -------------------- Bass --------------------
             case 'create-bassline':
                 return { key: 'F', mode: 'minor', style: prompt || 'dark rolling bass' };
+
+            case 'generate-bassline-in-key': {
+                return {
+                    key: 'F',
+                    mode: 'minor',
+                    style: prompt || 'dark rolling bass',
+                    prompt,
+                };
+            }
+
+            // -------------------- Melody / Harmony --------------------
             case 'create-melody-from-chords':
                 return { chords: ['Fm', 'Db', 'Ab', 'Eb'], prompt: prompt || 'Make an emotional hook melody', duration: 8 };
+
+            case 'create-8-bar-melody': {
+                return {
+                    chords: ['Fm', 'Db', 'Ab', 'Eb'],
+                    prompt: prompt || 'Create an 8-bar melody with clear motifs and variation',
+                    duration: 16,
+                };
+            }
+
+            case 'generate-chord-progression':
+                return { prompt: prompt || 'Generate a chord progression for a minor electronic track in F' };
+
+            // -------------------- Full track / Arrangement --------------------
             case 'generate-full-idea':
                 return { prompt: prompt || 'Generate a full 8-bar idea', duration: 16 };
+
+            case 'ai-arrangement-suggestions':
+                return { prompt: prompt || 'Suggest arrangement for this idea (intro, build, drop, break, outro)' };
+
+            // -------------------- Conversational / Diagnostics --------------------
             case 'explain-mix-needs':
                 return { context: prompt || 'Kick is muddy, vocals are buried, stereo field feels narrow.' };
+
             case 'fix-timing':
-            case 'fix-timing':$n                return { loopDescription: prompt || 'Hi-hats feel rushed against kick and snare.', context: '' };
-            case 'search-samples':$n                return { query: prompt };
-            case 'find-kicks':$n                return { query: 'kick' };
-            case 'find-snares':$n                return { query: 'snare' };
-            case 'find-bass':$n                return { query: 'bass' };
-            case 'find-vocals':$n                return { query: 'vocal' };
-            case 'random-inspiration':$n                return { query: '' };
+                return { loopDescription: prompt || 'Hi-hats feel rushed against kick and snare.', context: '' };
+
+            // sample browsing helpers (if wired in your backend)
+            case 'search-samples':
+                return { query: prompt };
+            case 'find-kicks':
+                return { query: 'kick' };
+            case 'find-snares':
+                return { query: 'snare' };
+            case 'find-bass':
+                return { query: 'bass' };
+            case 'find-vocals':
+                return { query: 'vocal' };
+            case 'random-inspiration':
+                return { query: '' };
+
             default:
                 return { prompt };
         }

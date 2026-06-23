@@ -1,4 +1,4 @@
-// sequencer-panel.js
+﻿// sequencer-panel.js
 // Wires StepSequencer into existing DAW state/UI.
 
 (function () {
@@ -27,6 +27,30 @@
       container.style.height = '320px';
       container.style.overflow = 'auto';
       container.style.background = 'var(--color-bg-main)';
+        // Genre dropdown for drum patterns
+        var genreSelect = document.createElement('select');
+        genreSelect.id = 'genre-pattern-select';
+        genreSelect.style.margin = '8px';
+        genreSelect.style.padding = '4px 8px';
+        genreSelect.style.background = '#2a2a2a';
+        genreSelect.style.color = '#ddd';
+        genreSelect.innerHTML = '<option value=\'\'>Select Genre...</option>';
+        var genres = ['trap','drill','boombap','jerseyclub','ukgarage','house','techno','dnb','lofi','hyperpop','phonk','emorap','synthwave','afrobeats','grime'];
+        var genreNames = ['Trap','Drill','Boom Bap','Jersey Club','UK Garage','House','Techno','Drum & Bass','Lo-Fi','Hyperpop','Phonk','Emo Rap','Synthwave','Afro Beats','Grime'];
+        for(var g=0; g<genres.length; g++) {
+          var opt = document.createElement('option');
+          opt.value = genres[g];
+          opt.textContent = genreNames[g];
+          genreSelect.appendChild(opt);
+        }.panel.insertBefore(genreSelect, container);
+        // Apply genre pattern on change
+        genreSelect.addEventListener('change', function() {
+          if(!this.value || !window.__stepSequencer) return;
+          var gps = new window.GenreDrumPatternService();
+          var p = gps.generateUniquePattern(this.value);
+          var tracks = app.audioEngine.tracks; gps.applyToSequencer(window.__stepSequencer, tracks.map(t=>t.id), p.pattern);
+          console.log('Loaded', p.genreName, 'pattern. Seed:', p.seed);
+        });
       panel.appendChild(container);
     }
 

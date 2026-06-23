@@ -251,35 +251,34 @@
                     </div>
                 </section>
 
-                <!-- Mixer / Bottom Panel -->
-                <section class="daw-mixer-container mixer-panel" id="mixer-panel">
-                    <div class="mixer-header">ðŸŽšï¸ Mixer</div>
-                    <div class="mixer-content" id="mixer-content">
-                        <!-- Mixer Channels -->
-                        <div class="mixer-channel">
-                            <div class="mixer-channel-header">
-                                <div class="mixer-channel-name">Drums</div>
-                                <div class="mixer-color-tag"></div>
-                            </div>
-                            <div class="mixer-fader-container">
-                                <input type="range" class="mixer-fader vertical" min="-60" max="12" value="0" title="Volume" />
-                                <div class="fader-value" id="fader-value-1">0 dB</div>
-                            </div>
-                            <div class="mixer-meter">
-                                <div class="mixer-meter-fill" style="height: 40%;"></div>
-                            </div>
-                            <div class="mixer-buttons">
-                                <button class="mixer-btn-mute" title="Mute">M</button>
-                                <button class="mixer-btn-solo" title="Solo">S</button>
-                            </div>
-                        </div>
+                <!-- Sequencer Panel -->
+                <section class="daw-sequencer-container">
+                    <div class="sequencer-header">
+                        <span>Step Sequencer</span>
+                        <select id="genre-pattern-select">
+                            <option value="">Select Genre...</option>
+                            <option value="trap">Trap</option>
+                            <option value="drill">Drill</option>
+                            <option value="boombap">Boom Bap</option>
+                            <option value="jerseyclub">Jersey Club</option>
+                            <option value="ukgarage">UK Garage</option>
+                            <option value="house">House</option>
+                            <option value="techno">Techno</option>
+                            <option value="dnb">Drum & Bass</option>
+                            <option value="lofi">Lo-Fi</option>
+                            <option value="hyperpop">Hyperpop</option>
+                            <option value="phonk">Phonk</option>
+                            <option value="emorap">Emo Rap</option>
+                            <option value="synthwave">Synthwave</option>
+                            <option value="afrobeats">Afro Beats</option>
+                            <option value="grime">Grime</option>
+                        </select>
+                    </div>
+                    <div id="step-sequencer-container"></div>
+                </section>
 
-                        <div class="mixer-channel">
-                            <div class="mixer-channel-header">
-                                <div class="mixer-channel-name">Bass</div>
-                                <div class="mixer-color-tag orange"></div>
-                            </div>
-                            <div class="mixer-fader-container">
+
+                <!-- Mixer / Bottom Panel -->
                                 <input type="range" class="mixer-fader vertical" min="-60" max="12" value="-3" title="Volume" />
                                 <div class="fader-value" id="fader-value-2">-3 dB</div>
                             </div>

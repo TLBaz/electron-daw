@@ -6,7 +6,7 @@ class AudiocraftAdapter {
   constructor(options = {}) {
     this.pythonBin = options.pythonBin || 'python';
     this.scriptPath = options.scriptPath
-      || path.join(process.cwd(), 'ai', 'python', 'audiocraft_generate.py');
+      || path.join(__dirname, '..', 'python', 'audiocraft_generate.py');
     this.storage = options.storage || new FileStorageService();
   }
 

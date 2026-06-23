@@ -70,30 +70,60 @@ class AIMusicOrchestrator {
     });
   }
 
+  async generateChordProgression({ key = 'F', mode = 'minor', degrees = ['i', 'VI', 'III', 'VII'] } = {}) {
+    const progression = this.tonal.getChordProgression(key, mode, degrees);
+    return {
+      ok: true,
+      provider: 'tonal',
+      key,
+      mode,
+      degrees,
+      progression,
+    };
+  }
+
+  async aiArrangementSuggestions({ prompt = '' } = {}) {
+    const { ok, provider, text } = await this._askTextModel({
+      message: `Suggest arrangement for this idea: ${prompt}`,
+      context: '',
+    });
+
+    return {
+      ok: true,
+      provider,
+      suggestions: text,
+    };
+  }
+
   async explainMixNeeds({ context = '' } = {}) {
-    const response = await this.chat.ask({
+    const { provider, text } = await this._askTextModel({
       message: 'Explain what this mix needs and suggest concrete next actions.',
       context,
     });
 
     return {
       ok: true,
-      provider: 'local-advisor',
-      analysis: response.text,
+      provider,
+      analysis: text,
     };
   }
 
   async fixTimingIssues({ loopDescription = '', context = '' } = {}) {
-    const response = await this.chat.ask({
+    const { provider, text } = await this._askTextModel({
       message: `Fix timing issues in this loop: ${loopDescription}`,
       context,
     });
 
     return {
       ok: true,
-      provider: 'local-advisor',
-      suggestions: response.text,
+      provider,
+      suggestions: text,
     };
+  }
+
+  async _askTextModel({ message, context = '' }) {
+    const res = await this.chat.ask({ message, context });
+    return { ok: true, provider: res.raw?.provider || 'local-advisor', text: res.text || '' };
   }
 }
 
