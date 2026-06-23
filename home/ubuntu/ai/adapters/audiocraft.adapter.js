@@ -8,6 +8,9 @@ class AudiocraftAdapter {
     this.scriptPath = options.scriptPath
       || path.join(__dirname, '..', 'python', 'audiocraft_generate.py');
     this.storage = options.storage || new FileStorageService();
+    this.defaultModel = options.defaultModel
+      || process.env.MUSICGEN_MODEL
+      || 'facebook/musicgen-large';
   }
 
   generate(params = {}) {
@@ -20,7 +23,7 @@ class AudiocraftAdapter {
         duration: Number(params.duration || 8),
         mode: params.mode || 'full_track',
         outputPath: outPath,
-        model: params.model || 'facebook/musicgen-medium',
+        model: params.model || this.defaultModel,
       };
 
       const child = spawn(this.pythonBin, [this.scriptPath, JSON.stringify(payload)], {

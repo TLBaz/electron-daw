@@ -45,13 +45,19 @@ Example setup:
 ```bash
 python -m venv .venv
 . .venv/Scripts/activate
-pip install torch torchaudio
-# then install from cloned repos:
-# pip install -e ./external/audiocraft
+pip install torch torchaudio transformers accelerate scipy sentencepiece
 # pip install -e ./external/riffusion
 ```
 
+Recommended default for strong machines:
+
+```bash
+export MUSICGEN_MODEL=facebook/musicgen-large
+export MUSICGEN_DEVICE=cuda
+```
+
+The Audiocraft adapter now defaults to `facebook/musicgen-large` and writes real generated wav output via `ai/python/audiocraft_generate.py` using Hugging Face Transformers MusicGen.
+
 Then wire real inference logic inside:
 
-- `ai/python/audiocraft_generate.py`
 - `ai/python/riffusion_generate.py`
