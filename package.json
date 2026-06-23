@@ -1,0 +1,9 @@
+{
+  "name": "electron-daw-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "cd home/ubuntu && npm start",
+    "build": "cd home/ubuntu && npm run build"
+  }
+}
