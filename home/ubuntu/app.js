@@ -1,4 +1,4 @@
-// ============================================
+﻿// ============================================
 // DAW APPLICATION - Main Controller
 // ============================================
 
@@ -28,7 +28,7 @@ class DAWApplication {
             this.audioLoader = new AudioLoader(this.audioEngine);
             this.transport = new Transport(this.audioEngine);
             this.transport.setSampleBufferProvider((p) => this.audioLoader.getCachedBuffer(p));
-            this.sampleBrowser = new SampleBrowser(this.audioEngine, this.audioLoader);
+            this.sampleBrowser = new SampleBrowser(this.audioEngine, this.audioLoader); this.sampleLibrary = new SampleLibraryService();
             if (typeof window.AIClient === 'function') {
                 this.aiClient = new window.AIClient(window.electronAPI);
             }
@@ -56,17 +56,25 @@ class DAWApplication {
             // Wire everything together
             this.wireUpSystems();
             
+            // Load Splice samples on startup
+            const splicePath = "C:\\Users\\beata\\Documents\\Splice\\Samples\\packs";
+            const self = this;
+            if (window.electronAPI) {
+                window.electronAPI.invoke("load-samples-directory", splicePath)
+                    .then(r => { if (r.success && r.samples.length) self.sampleBrowser.loadFromPaths(r.samples); if(self.sampleLibrary) self.sampleLibrary.setSamples(r.samples); })
+                    .catch(e => { console.log("Samples not found:", e); });
+            }
             // Create default project
             this.projectManager.newProject('Beats2026');
             
-            console.log('✓ DAW Application initialized');
+            console.log('âœ“ DAW Application initialized');
         } catch (error) {
-            console.error('✗ Initialization error:', error);
+            console.error('âœ— Initialization error:', error);
         }
     }
 
     wireUpSystems() {
-        // Transport → UI updates
+        // Transport â†’ UI updates
         this.transport.onTick = (data) => {
             this.uiController.updateTimeDisplay(data);
             if (this.rulerRenderer) {
@@ -87,13 +95,13 @@ class DAWApplication {
             this.uiController.resetTimeDisplay();
         };
 
-        // Audio Engine → UI updates
+        // Audio Engine â†’ UI updates
         this.audioEngine.onTimeUpdate = (currentTime) => {
             const beatInfo = this.transport.getBeatInfo();
             this.uiController.updateBeatDisplay(beatInfo);
         };
 
-        // Project Manager → UI
+        // Project Manager â†’ UI
         this.projectManager.onSaveDone = (data) => {
             this.uiController.showNotification(`Saved: ${data.message}`, 'success');
             this.uiController.clearUnsavedIndicator();
@@ -112,7 +120,7 @@ class DAWApplication {
             this.uiController.showUnsavedIndicator();
         };
 
-        // Sample Browser → UI
+        // Sample Browser â†’ UI
         this.sampleBrowser.onDirectoryLoaded = (samples) => {
             this.uiController.renderSampleList(samples);
         };
@@ -361,7 +369,13 @@ class UIController {
             case 'explain-mix-needs':
                 return { context: prompt || 'Kick is muddy, vocals are buried, stereo field feels narrow.' };
             case 'fix-timing':
-                return { loopDescription: prompt || 'Hi-hats feel rushed against kick and snare.', context: '' };
+            case 'fix-timing':$n                return { loopDescription: prompt || 'Hi-hats feel rushed against kick and snare.', context: '' };
+            case 'search-samples':$n                return { query: prompt };
+            case 'find-kicks':$n                return { query: 'kick' };
+            case 'find-snares':$n                return { query: 'snare' };
+            case 'find-bass':$n                return { query: 'bass' };
+            case 'find-vocals':$n                return { query: 'vocal' };
+            case 'random-inspiration':$n                return { query: '' };
             default:
                 return { prompt };
         }
@@ -661,7 +675,7 @@ class UIController {
             item.className = 'tree-item';
             item.draggable = true;
             item.innerHTML = `
-                <span class="tree-label">🎵 ${file.name}</span>
+                <span class="tree-label">ðŸŽµ ${file.name}</span>
             `;
 
             item.addEventListener('dragstart', (e) => {

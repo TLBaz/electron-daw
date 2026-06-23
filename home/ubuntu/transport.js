@@ -1,4 +1,4 @@
-// transport.js
+﻿// transport.js
 
 class Transport {
   constructor(audioEngine) {
@@ -179,5 +179,71 @@ class Transport {
   }
 }
 
+// Phase 2: Additional Transport properties and methods
+  this.playbackRate = 1.0;
+  this.quantize = 0;
+  this.swing = 0;
+  this.isRecording = false;
+  this.metronomeEnabled = false;
+  this.metronomeVolume = -12;
+
+  this._metronomeBuffer = null;
+
+
+  setPlaybackRate(rate) {
+    this.playbackRate = Math.max(0.5, Math.min(2.0, Number(rate) || 1.0));
+  }
+
+
+  setQuantize(grid) {
+    this.quantize = [0,4,8,16,32].includes(Number(grid)) ? Number(grid) : 0;
+  }
+
+
+  setSwing(amount) {
+    this.swing = Math.max(0, Math.min(50, Number(amount) || 0));
+  }
+
+  quantizeBeat(beat) {
+    if (this.quantize <= 0) return beat;
+    return Math.round(beat * this.quantize) / this.quantize;
+  }
+
+
+  getSwingOffset(beatIndex) {
+    if (this.swing <= 0 || beatIndex % 2 === 0) return 0;
+    return this.swing / 100 * 0.5;
+  }
+
+
+  toggleRecording(enabled) {
+    this.isRecording = !!enabled;
+  }
+
+
+  toggleMetronome(enabled) {
+    this.metronomeEnabled = !!enabled;
+  }
+
+
+  setMetronomeVolume(db) {
+    this.metronomeVolume = Math.max(-60, Math.min(0, Number(db) || -12));
+  }
+
+
+  async playMetronomeTick() {
+    if (!this.metronomeEnabled || !this._metronomeBuffer) return;
+    const ctx = this.engine.ctx;
+    const source = ctx.createBufferSource();
+    source.buffer = this._metronomeBuffer;
+    const gain = ctx.createGain();
+    gain.gain.value = Math.pow(10, this.metronomeVolume / 20);
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    source.start();
+  }
+
+
 window.Transport = Transport;
+
 
