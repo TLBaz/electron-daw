@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; worker-src 'self' blob:; connect-src 'self' https: http: ws: wss: blob:;" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Electron DAW - Professional Digital Audio Workstation</title>
     
@@ -25,19 +25,46 @@
         <header class="transport-bar">
             <!-- Project Info -->
             <div class="project-info">
-                <button class="btn btn-sm" id="btn-new" title="New Project (Ctrl+N)">ðŸ“„</button>
-                <button class="btn btn-sm" id="btn-open" title="Open Project">ðŸ“</button>
-                <button class="btn btn-sm" id="btn-save" title="Save Project (Ctrl+S)">ðŸ’¾</button>
-                <span class="project-name" id="project-name">Beats2026</span>
+                <!-- File Menu Dropdown -->
+                <div class="file-menu-wrapper" id="file-menu-wrapper">
+                    <button class="btn btn-sm file-menu-trigger" id="btn-file-menu" title="File Menu (Alt+F)">File ▾</button>
+                    <div class="file-dropdown" id="file-dropdown">
+                        <div class="file-dropdown-item" data-action="new"><span class="fd-icon">📄</span><span class="fd-label">New Project</span><span class="fd-shortcut">Ctrl+N</span></div>
+                        <div class="file-dropdown-item" data-action="open"><span class="fd-icon">📂</span><span class="fd-label">Open...</span><span class="fd-shortcut">Ctrl+O</span></div>
+                        <div class="file-dropdown-sep"></div>
+                        <div class="file-dropdown-item" data-action="save"><span class="fd-icon">💾</span><span class="fd-label">Save</span><span class="fd-shortcut">Ctrl+S</span></div>
+                        <div class="file-dropdown-item" data-action="save-as"><span class="fd-icon">💾</span><span class="fd-label">Save As...</span><span class="fd-shortcut">Ctrl+⇧+S</span></div>
+                        <div class="file-dropdown-sep"></div>
+                        <div class="file-dropdown-item file-dropdown-has-sub" data-action="recent"><span class="fd-icon">🕐</span><span class="fd-label">Recent Projects</span><span class="fd-shortcut">▸</span>
+                            <div class="file-dropdown-sub" id="recent-projects-list">
+                                <div class="file-dropdown-item file-dropdown-empty">No recent projects</div>
+                            </div>
+                        </div>
+                        <div class="file-dropdown-item" data-action="all-projects"><span class="fd-icon">📁</span><span class="fd-label">All Projects...</span></div>
+                        <div class="file-dropdown-sep"></div>
+                        <div class="file-dropdown-item" data-action="rename"><span class="fd-icon">✏️</span><span class="fd-label">Rename Project...</span></div>
+                        <div class="file-dropdown-sep"></div>
+                        <div class="file-dropdown-item" data-action="import"><span class="fd-icon">📥</span><span class="fd-label">Import Audio...</span></div>
+                        <div class="file-dropdown-item" data-action="export"><span class="fd-icon">📤</span><span class="fd-label">Export Mix...</span></div>
+                        <div class="file-dropdown-sep"></div>
+                        <div class="file-dropdown-item" data-action="settings"><span class="fd-icon">⚙️</span><span class="fd-label">Settings</span></div>
+                        <div class="file-dropdown-sep"></div>
+                        <div class="file-dropdown-item file-dropdown-danger" data-action="quit"><span class="fd-icon">✕</span><span class="fd-label">Quit</span><span class="fd-shortcut">Alt+F4</span></div>
+                    </div>
+                </div>
+                <button class="btn btn-sm" id="btn-new" title="New Project (Ctrl+N)">📄</button>
+                <button class="btn btn-sm" id="btn-open" title="Open Project (Ctrl+O)">📂</button>
+                <button class="btn btn-sm" id="btn-save" title="Save Project (Ctrl+S)">💾</button>
+                <span class="project-name" id="project-name" title="Double-click to rename">Beats2026</span>
                 <div class="project-unsaved" id="project-unsaved"></div>
             </div>
 
             <!-- Transport Controls -->
             <div class="transport-controls">
-                <button class="transport-btn transport-btn-play" id="btn-play" title="Play (Space)">â–¶</button>
-                <button class="transport-btn transport-btn-stop" id="btn-stop" title="Stop">â¹</button>
-                <button class="transport-btn transport-btn-loop" id="btn-loop" title="Loop">ðŸ”„</button>
-                <button class="transport-btn transport-btn-record" id="btn-record" title="Record (R)">âº</button>
+                <button class="transport-btn transport-btn-play" id="btn-play" title="Play (Space)">▶</button>
+                <button class="transport-btn transport-btn-stop" id="btn-stop" title="Stop">⏹</button>
+                <button class="transport-btn transport-btn-loop" id="btn-loop" title="Loop">🔄</button>
+                <button class="transport-btn transport-btn-record" id="btn-record" title="Record (R)">⏺</button>
             </div>
 
             <!-- Separator -->
@@ -71,7 +98,7 @@
 
             <!-- Metronome & Extras -->
             <div class="transport-extras">
-                <button class="metronome-btn" id="btn-metronome" title="Toggle Metronome">ðŸ”Š</button>
+                <button class="metronome-btn" id="btn-metronome" title="Toggle Metronome">🔊</button>
             </div>
 
             <!-- Spacer -->
@@ -79,8 +106,8 @@
 
             <!-- Right Controls -->
             <div class="transport-right">
-                <button class="settings-btn" id="btn-settings" title="Settings">âš™ï¸</button>
-                <button class="menu-btn" id="btn-menu" title="Menu">â˜°</button>
+                <button class="settings-btn" id="btn-settings" title="Settings">⚙️</button>
+                <button class="menu-btn" id="btn-menu" title="Menu">☰</button>
             </div>
         </header>
 
@@ -90,7 +117,7 @@
         <div class="daw-main">
             <!-- LEFT PANEL: Browser -->
             <aside class="daw-left browser-panel" id="browser-panel">
-                <div class="browser-header">ðŸ— Browser</div>
+                <div class="browser-header">🎵 Browser</div>
                 
                 <!-- Browser Tabs -->
                 <div class="browser-tabs">
@@ -105,17 +132,17 @@
                     <div class="browser-content-item active" id="tab-projects">
                         <div class="tree-view" id="projects-tree">
                             <div class="tree-item">
-                                <button class="tree-toggle">â–¼</button>
-                                <span class="tree-icon">ðŸ“</span>
+                                <button class="tree-toggle">▼</button>
+                                <span class="tree-icon">📂</span>
                                 <span>My Projects</span>
                             </div>
                             <div class="tree-children">
                                 <div class="tree-item">
-                                    <span class="tree-icon">ðŸŽµ</span>
+                                    <span class="tree-icon">🎵</span>
                                     <span>Demo Project 1</span>
                                 </div>
                                 <div class="tree-item">
-                                    <span class="tree-icon">ðŸŽµ</span>
+                                    <span class="tree-icon">🎵</span>
                                     <span>Demo Project 2</span>
                                 </div>
                             </div>
@@ -132,19 +159,22 @@
                                 id="sample-search"
                             />
                         </div>
+
                         <div class="tree-view" id="samples-tree">
-                            <div class="sample-item draggable" data-file="sample1.wav">
-                                <span class="sample-icon">ðŸŽµ</span>
-                                <span>Kick_Deep.wav</span>
+                            <!-- Preloaded curated section -->
+                            <div class="tree-item">
+                                <button class="tree-toggle" type="button">▼</button>
+                                <span class="tree-icon">✨</span>
+                                <span>Choice Samples (Preloaded)</span>
                             </div>
-                            <div class="sample-item draggable" data-file="sample2.wav">
-                                <span class="sample-icon">ðŸŽµ</span>
-                                <span>Snare_Crisp.wav</span>
+                            <div class="tree-children" id="choice-samples-list"></div>
+
+                            <div class="tree-item">
+                                <button class="tree-toggle" type="button">▼</button>
+                                <span class="tree-icon">📚</span>
+                                <span>All Samples</span>
                             </div>
-                            <div class="sample-item draggable" data-file="sample3.wav">
-                                <span class="sample-icon">ðŸŽµ</span>
-                                <span>Hat_Closed.wav</span>
-                            </div>
+                            <div class="tree-children" id="all-samples-list"></div>
                         </div>
                     </div>
 
@@ -152,15 +182,15 @@
                     <div class="browser-content-item" id="tab-instruments">
                         <div class="tree-view" id="instruments-tree">
                             <div class="tree-item">
-                                <span class="tree-icon">ðŸŽ¹</span>
+                                <span class="tree-icon">🎹</span>
                                 <span>Synthesizer</span>
                             </div>
                             <div class="tree-item">
-                                <span class="tree-icon">ðŸŽ¹</span>
+                                <span class="tree-icon">🎹</span>
                                 <span>Piano</span>
                             </div>
                             <div class="tree-item">
-                                <span class="tree-icon">ðŸŽ¹</span>
+                                <span class="tree-icon">🎹</span>
                                 <span>Strings</span>
                             </div>
                         </div>
@@ -181,13 +211,69 @@
                     <div class="ruler" id="ruler">
                         <div class="ruler-markers" id="ruler-markers">
                             <div class="bar-marker" style="width: 120px;">1</div>
-                            <div class="beat-marker" style="width: 30px;"></div>
-                            <div class="beat-marker" style="width: 30px;"></div>
-                            <div class="beat-marker" style="width: 30px;"></div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
                             <div class="bar-marker" style="width: 120px;">2</div>
-                            <div class="beat-marker" style="width: 30px;"></div>
-                            <div class="beat-marker" style="width: 30px;"></div>
-                            <div class="beat-marker" style="width: 30px;"></div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
+                            <div class="bar-marker" style="width: 120px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
+                            <div class="bar-marker" style="width: 120px;">4</div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
+                            <div class="bar-marker" style="width: 120px;">5</div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
+                            <div class="bar-marker" style="width: 120px;">6</div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
+                            <div class="bar-marker" style="width: 120px;">7</div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
+                            <div class="bar-marker" style="width: 120px;">8</div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
+                            <div class="bar-marker" style="width: 120px;">9</div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
+                            <div class="bar-marker" style="width: 120px;">10</div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
+                            <div class="bar-marker" style="width: 120px;">11</div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
+                            <div class="bar-marker" style="width: 120px;">12</div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
+                            <div class="bar-marker" style="width: 120px;">13</div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
+                            <div class="bar-marker" style="width: 120px;">14</div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
+                            <div class="bar-marker" style="width: 120px;">15</div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
+                            <div class="bar-marker" style="width: 120px;">16</div>
+                            <div class="beat-marker" style="width: 30px;">2</div>
+                            <div class="beat-marker" style="width: 30px;">3</div>
+                            <div class="beat-marker" style="width: 30px;">4</div>
                         </div>
                         <div class="playhead" id="playhead" style="left: 0;"></div>
                     </div>
@@ -220,7 +306,7 @@
                         </div>
 
                         <!-- Tracks Grid -->
-                        <div style="flex: 1; overflow: auto;">
+                        <div class="tracks-grid-scroll">
                             <!-- Track 1: Drums -->
                             <div class="track">
                                 <div class="track-clips" id="track-1-clips">
@@ -255,7 +341,7 @@
                 <section class="daw-sequencer-container">
                     <div class="sequencer-header">
                         <span>Step Sequencer</span>
-                        <select id="genre-pattern-select">
+                        <select id="genre-pattern-select" title="Genre pattern selection">
                             <option value="">Select Genre...</option>
                             <option value="trap">Trap</option>
                             <option value="drill">Drill</option>
@@ -279,7 +365,35 @@
 
 
                 <!-- Mixer / Bottom Panel -->
-                                <input type="range" class="mixer-fader vertical" min="-60" max="12" value="-3" title="Volume" />
+                <section class="mixer-panel">
+                    <div class="mixer-header">🎚 Mixer</div>
+                    <div class="mixer-content">
+                        <!-- Drums Channel -->
+                        <div class="mixer-channel">
+                            <div class="mixer-channel-header">
+                                <div class="mixer-channel-name">Drums</div>
+                                <div class="mixer-color-tag purple"></div>
+                            </div>
+                            <div class="mixer-fader-container">
+                                <input type="range" class="mixer-fader vertical" min="-60" max="12" value="0" title="Drums volume" />
+                                <div class="fader-value" id="fader-value-1">0 dB</div>
+                            </div>
+                            <div class="mixer-meter">
+                                <div class="mixer-meter-fill" style="height: 50%;"></div>
+                            </div>
+                            <div class="mixer-buttons">
+                                <button class="mixer-btn-mute" title="Mute">M</button>
+                                <button class="mixer-btn-solo" title="Solo">S</button>
+                            </div>
+                        </div>
+                        <!-- Bass Channel -->
+                        <div class="mixer-channel">
+                            <div class="mixer-channel-header">
+                                <div class="mixer-channel-name">Bass</div>
+                                <div class="mixer-color-tag blue"></div>
+                            </div>
+                            <div class="mixer-fader-container">
+                                <input type="range" class="mixer-fader vertical" min="-60" max="12" value="-3" title="Bass volume" />
                                 <div class="fader-value" id="fader-value-2">-3 dB</div>
                             </div>
                             <div class="mixer-meter">
@@ -290,14 +404,14 @@
                                 <button class="mixer-btn-solo" title="Solo">S</button>
                             </div>
                         </div>
-
+                        <!-- Lead Channel -->
                         <div class="mixer-channel">
                             <div class="mixer-channel-header">
                                 <div class="mixer-channel-name">Lead</div>
                                 <div class="mixer-color-tag green"></div>
                             </div>
                             <div class="mixer-fader-container">
-                                <input type="range" class="mixer-fader vertical" min="-60" max="12" value="-6" title="Volume" />
+                                <input type="range" class="mixer-fader vertical" min="-60" max="12" value="-6" title="Lead volume" />
                                 <div class="fader-value" id="fader-value-3">-6 dB</div>
                             </div>
                             <div class="mixer-meter">
@@ -308,7 +422,6 @@
                                 <button class="mixer-btn-solo" title="Solo">S</button>
                             </div>
                         </div>
-
                         <!-- Master Channel -->
                         <div class="mixer-master">
                             <div class="mixer-master-label">Master</div>
@@ -326,7 +439,7 @@
 
             <!-- RIGHT PANEL: Inspector -->
             <aside class="daw-right inspector-panel" id="inspector-panel">
-                <div class="inspector-header">ðŸ” Inspector</div>
+                <div class="inspector-header">🔍 Inspector</div>
                 
                 <div class="inspector-content" id="inspector-content">
                     <!-- Track Properties -->
@@ -380,12 +493,12 @@
 
                         <div class="property-row">
                             <label class="property-label">Duration</label>
-                            <span class="track-property-value">â€” (No clip selected)</span>
+                            <span class="track-property-value">— (No clip selected)</span>
                         </div>
 
                         <div class="property-row">
                             <label class="property-label">Start Time (Beat)</label>
-                            <span class="track-property-value">â€” (No clip selected)</span>
+                            <span class="track-property-value">— (No clip selected)</span>
                         </div>
                     </div>
 
@@ -414,13 +527,19 @@
 
                         <div class="property-row">
                             <label class="property-label">Command</label>
-                            <select class="property-select" id="ai-command" title="AI command selection">
+                            <select class="property-select" id="ai-command" title="AI command selection" aria-label="AI command selection">
                                 <option value="generate-drum-pattern">Generate drum pattern in style</option>
                                 <option value="create-bassline">Create bassline in key</option>
                                 <option value="create-melody-from-chords">Create melody from chords</option>
                                 <option value="generate-full-idea">Generate full 8-bar idea</option>
                                 <option value="explain-mix-needs">Explain what mix needs</option>
-                                <option value="fix-timing">Fix timing issues in loop</option>\n                                <option value="search-samples">Search samples</option>\n                                <option value="find-kicks">Find kick samples</option>\n                                <option value="find-snares">Find snare samples</option>\n                                <option value="find-bass">Find bass samples</option>\n                                <option value="find-vocals">Find vocal samples</option>\n                                <option value="random-inspiration">Get random inspiration</option>
+                                <option value="fix-timing">Fix timing issues in loop</option>
+                                <option value="search-samples">Search samples</option>
+                                <option value="find-kicks">Find kick samples</option>
+                                <option value="find-snares">Find snare samples</option>
+                                <option value="find-bass">Find bass samples</option>
+                                <option value="find-vocals">Find vocal samples</option>
+                                <option value="random-inspiration">Get random inspiration</option>
                             </select>
                         </div>
 
@@ -463,9 +582,11 @@
     <script src="waveform-renderer.js"></script>
     <script src="project-manager.js"></script>
     <script src="sequencer.js"></script>
-    <script src="genre-patterns.js"></script>\n    <script src="sequencer-panel.js"></script>
+    <script src="genre-patterns.js"></script>
+    <script src="sequencer-panel.js"></script>
     <script src="ai/renderer/ai-client.js"></script>
-    <script src="sample-library.js"></script>\n    <script src="app.js"></script>
+    <script src="sample-library.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
 

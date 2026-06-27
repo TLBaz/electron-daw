@@ -10,8 +10,11 @@ class DAWApplication {
         this.aiClient = null;
         this.rulerRenderer = null;
         this.sampleBrowser = null;
+        this.sampleLibrary = null;
         this.projectManager = null;
         this.uiController = null;
+
+        this.choiceSamples = [];
         this.state = {
             selectedTrack: null,
             selectedClip: null,
@@ -21,6 +24,104 @@ class DAWApplication {
         this.init();
     }
 
+    pickBestChoiceSamples(samples, targetCount = 24) {
+        if (!Array.isArray(samples) || !samples.length) return [];
+
+        const typeScore = {
+            kick: 120,
+            snare: 110,
+            hihat: 100,
+            clap: 95,
+            vocal: 90,
+            bass: 105,
+            loop: 70,
+            synth: 60,
+            other: 20,
+        };
+
+        const keywordBoosts = [
+            { re: /(one[\s\-_]?shot|oneshot)/i, boost: 35 },
+            { re: /(kit|drumkit)/i, boost: 18 },
+            { re: /(loop|groove|beat)/i, boost: 16 },
+            { re: /(stem)/i, boost: 10 },
+            { re: /(vocal|vox)/i, boost: 10 },
+            { re: /(fx|hit)/i, boost: 6 },
+        ];
+
+        const scored = samples.map((s) => {
+            const name = (s.name || '').toLowerCase();
+            const category = (s.category || '').toLowerCase();
+            const type = (s.type || '').toLowerCase();
+
+            let score = (typeScore[type] ?? 0);
+
+            // Prefer obvious musical role keywords (roughly aligns with SampleLibraryService.detectType)
+            if (name.includes('kick') || name.includes('bd_')) score += 30;
+            if (name.includes('snare') || name.includes('sd_')) score += 30;
+            if (name.includes('hat')) score += 20;
+            if (name.includes('clap')) score += 15;
+            if (name.includes('vocal') || name.includes('vox')) score += 15;
+            if (name.includes('bass') || name.includes('sub')) score += 22;
+
+            // Small diversity: category name contribution
+            if (category && category !== 'uncategorized') score += 6;
+
+            // Keyword-based boosts
+            for (const k of keywordBoosts) {
+                if (k.re.test(name)) score += k.boost;
+            }
+
+            // Ensure stable ordering: slight tie-break by string hash
+            const hash = (name.length ? name.split('').reduce((a, c) => a + c.charCodeAt(0), 0) : 0) % 1000;
+            score += hash / 1000;
+
+            return { s, score };
+        });
+
+        scored.sort((a, b) => b.score - a.score);
+
+        // Diversity quotas by type
+        const desiredTypes = ['kick', 'snare', 'hihat', 'clap', 'bass', 'vocal', 'loop', 'synth', 'other'];
+        const quotas = {
+            kick: 3,
+            snare: 3,
+            hihat: 3,
+            clap: 1,
+            bass: 3,
+            vocal: 2,
+            loop: 4,
+            synth: 2,
+            other: 3,
+        };
+
+        const picked = [];
+        const pickedByType = {};
+
+        for (const { s } of scored) {
+            const t = (s.type || 'other').toLowerCase();
+            const wanted = quotas[t] ?? 0;
+            if (!wanted) continue;
+
+            pickedByType[t] = pickedByType[t] || 0;
+            if (pickedByType[t] < wanted) {
+                picked.push(s);
+                pickedByType[t] += 1;
+            }
+
+            if (picked.length >= targetCount) break;
+        }
+
+        // Backfill if quotas were too strict / too few samples
+        if (picked.length < targetCount) {
+            for (const { s } of scored) {
+                if (picked.length >= targetCount) break;
+                if (!picked.some((x) => x.path === s.path)) picked.push(s);
+            }
+        }
+
+        return picked.slice(0, targetCount);
+    }
+
     async init() {
         try {
             // Initialize audio systems
@@ -28,15 +129,16 @@ class DAWApplication {
             this.audioLoader = new AudioLoader(this.audioEngine);
             this.transport = new Transport(this.audioEngine);
             this.transport.setSampleBufferProvider((p) => this.audioLoader.getCachedBuffer(p));
-            this.sampleBrowser = new SampleBrowser(this.audioEngine, this.audioLoader); this.sampleLibrary = new SampleLibraryService();
+            this.sampleBrowser = new SampleBrowser(this.audioEngine, this.audioLoader);
+            this.sampleLibrary = new SampleLibraryService();
+
             if (typeof window.AIClient === 'function') {
                 this.aiClient = new window.AIClient(window.electronAPI);
             }
 
-            
             // Initialize UI
             this.uiController = new UIController(this);
-            
+
             // Initialize managers
             this.projectManager = new ProjectManager(this.audioEngine, this.transport, this);
 
@@ -52,21 +154,32 @@ class DAWApplication {
                 }
             }
 
-
             // Wire everything together
             this.wireUpSystems();
-            
+
             // Load Splice samples on startup
             const splicePath = "C:\\Users\\beata\\Documents\\Splice\\Samples\\packs";
             const self = this;
             if (window.electronAPI) {
                 window.electronAPI.invoke("load-samples-directory", splicePath)
-                    .then(r => { if (r.success && r.samples.length) self.sampleBrowser.loadFromPaths(r.samples); if(self.sampleLibrary) self.sampleLibrary.setSamples(r.samples); })
-                    .catch(e => { console.log("Samples not found:", e); });
+                    .then((r) => {
+                        if (r.success && r.samples.length) {
+                            // Preload curated choice samples immediately
+                            self.choiceSamples = self.pickBestChoiceSamples(r.samples, 24);
+                            if (self.uiController) self.uiController.renderChoiceSamples(self.choiceSamples);
+
+                            // Load full list into browser (and render to All Samples list)
+                            self.sampleBrowser.loadFromPaths(r.samples);
+
+                            if (self.sampleLibrary) self.sampleLibrary.setSamples(r.samples);
+                        }
+                    })
+                    .catch((e) => { console.log("Samples not found:", e); });
             }
+
             // Create default project
             this.projectManager.newProject('Beats2026');
-            
+
             console.log('âœ“ DAW Application initialized');
         } catch (error) {
             console.error('âœ— Initialization error:', error);
@@ -122,7 +235,8 @@ class DAWApplication {
 
         // Sample Browser â†’ UI
         this.sampleBrowser.onDirectoryLoaded = (samples) => {
-            this.uiController.renderSampleList(samples);
+            // Keep preloaded choice samples visible; render full list into "All Samples"
+            this.uiController.renderSampleList(samples, 'all');
         };
 
         // Enable auto-save
@@ -139,8 +253,23 @@ class DAWApplication {
 
     renderProject(project) {
         this.uiController.updateProjectName(project.name);
-        this.uiController.renderTracks(this.audioEngine.tracks);
-        this.uiController.renderMixer(this.audioEngine.tracks);
+
+        // This app's HTML currently uses static track/mixer markup.
+        // Only use dynamic renderers if the corresponding containers exist.
+        const tracksListEl = document.getElementById('tracks-list');
+        const mixerTracksEl = document.getElementById('mixer-tracks');
+
+        if (tracksListEl) {
+            this.uiController.renderTracks(this.audioEngine.tracks);
+        } else {
+            this.uiController.setupStaticTracks(this.audioEngine.tracks);
+        }
+
+        if (mixerTracksEl) {
+            this.uiController.renderMixer(this.audioEngine.tracks);
+        } else {
+            this.uiController.setupStaticMixer(this.audioEngine.tracks);
+        }
     }
 
     markProjectModified() {
@@ -171,6 +300,7 @@ class UIController {
     init() {
         this.setupTransportControls();
         this.setupProjectControls();
+        this.setupFileMenu();
         this.setupViewControls();
         this.setupBrowserControls();
         this.setupAIControls();
@@ -233,47 +363,280 @@ class UIController {
     }
 
     setupProjectControls() {
-        const btnNew = document.getElementById('btn-new');
-        if (btnNew) {
-            btnNew.addEventListener('click', () => {
-                if (this.app.projectManager.unsavedChanges) {
-                    if (!confirm('Create new project? Unsaved changes will be lost.')) {
-                        return;
-                    }
-                }
-                this.app.projectManager.newProject('Beats2026');
-            });
-        }
-
+        // Quick-access toolbar buttons delegate to the central _fileAction dispatcher
+        const btnNew  = document.getElementById('btn-new');
         const btnSave = document.getElementById('btn-save');
-        if (btnSave) {
-            btnSave.addEventListener('click', () => {
-                const project = {
-                    name: document.querySelector('.project-name').textContent,
-                    bpm: this.app.transport.bpm,
-                    timeSignature: this.app.transport.timeSignature,
-                    tracks: this.app.audioEngine.tracks,
-                };
-                this.app.projectManager.saveProject(project);
-            });
-        }
-
         const btnOpen = document.getElementById('btn-open');
-        if (btnOpen) {
-            btnOpen.addEventListener('click', async () => {
-                if (window.electronAPI) {
-                    try {
-                        const result = await window.electronAPI.invoke('list-projects');
-                        if (result.success) {
-                            this.showNotification(`Projects: ${result.projects.join(', ') || 'none'}`, 'info');
-                        }
-                    } catch (e) {
-                        console.warn('list-projects failed:', e);
-                    }
-                }
-            });
+
+        if (btnNew)  btnNew.addEventListener('click',  () => this._fileAction('new'));
+        if (btnSave) btnSave.addEventListener('click', () => this._fileAction('save'));
+        if (btnOpen) btnOpen.addEventListener('click', () => this._fileAction('open'));
+
+        // Double-click project name to rename inline
+        const projectName = document.getElementById('project-name');
+        if (projectName) {
+            projectName.addEventListener('dblclick', () => this._fileAction('rename'));
         }
     }
+
+    // ─── File Menu Dropdown ───────────────────────────────────────────────────
+
+    setupFileMenu() {
+        const trigger  = document.getElementById('btn-file-menu');
+        const dropdown = document.getElementById('file-dropdown');
+        if (!trigger || !dropdown) return;
+
+        // Toggle on trigger click
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = dropdown.classList.contains('open');
+            this._closeAllDropdowns();
+            if (!isOpen) {
+                dropdown.classList.add('open');
+                this._populateRecentProjects();
+            }
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', () => this._closeAllDropdowns());
+        dropdown.addEventListener('click', (e) => e.stopPropagation());
+
+        // Wire menu items (skip 'recent' — handled by CSS hover submenu)
+        dropdown.querySelectorAll('.file-dropdown-item[data-action]').forEach(item => {
+            item.addEventListener('click', () => {
+                const action = item.dataset.action;
+                if (action === 'recent') return;
+                this._closeAllDropdowns();
+                this._fileAction(action);
+            });
+        });
+
+        // Recent project sub-items (delegated)
+        document.addEventListener('click', (e) => {
+            const sub = e.target.closest('.recent-project-item');
+            if (sub) { this._closeAllDropdowns(); this._fileAction('load-recent', sub.dataset.name); }
+        });
+
+        // Alt+F toggles the menu
+        document.addEventListener('keydown', (e) => {
+            if (e.altKey && e.code === 'KeyF') {
+                e.preventDefault();
+                trigger.click();
+            }
+        });
+    }
+
+    _closeAllDropdowns() {
+        document.querySelectorAll('.file-dropdown.open').forEach(d => d.classList.remove('open'));
+    }
+
+    _populateRecentProjects() {
+        const list = document.getElementById('recent-projects-list');
+        if (!list) return;
+        const recent = this.app.projectManager.getRecentProjects();
+        if (!recent.length) {
+            list.innerHTML = '<div class="file-dropdown-item file-dropdown-empty">No recent projects</div>';
+            return;
+        }
+        list.innerHTML = recent.map(name =>
+            `<div class="file-dropdown-item recent-project-item" data-name="${name.replace(/"/g, '&quot;')}">
+                <span class="fd-icon">🎵</span>
+                <span class="fd-label">${name}</span>
+             </div>`
+        ).join('');
+    }
+
+    // ─── Central file action dispatcher ──────────────────────────────────────
+
+    async _fileAction(action, data) {
+        const pm  = this.app.projectManager;
+        const api = window.electronAPI;
+
+        switch (action) {
+
+            case 'new': {
+                if (pm.unsavedChanges && !confirm('New project? Unsaved changes will be lost.')) return;
+                const name = prompt('Project name:', 'Beats2026') || 'Beats2026';
+                pm.newProject(name);
+                pm.addToRecent(name);
+                break;
+            }
+
+            case 'open': {
+                if (pm.unsavedChanges && !confirm('Open project? Unsaved changes will be lost.')) return;
+                const result = await pm.openFromDialog();
+                if (result && !result.success && !result.canceled) {
+                    await this._showProjectListPicker(); // Fallback when no Electron dialog
+                }
+                break;
+            }
+
+            case 'save': {
+                const project = pm.getCurrentProject();
+                try {
+                    if (api) {
+                        const r = await api.invoke('save-project', project);
+                        if (r.success) {
+                            pm.addToRecent(project.name);
+                            pm.unsavedChanges = false;
+                            this.clearUnsavedIndicator();
+                            this.showNotification(`Saved: ${project.name}`, 'success');
+                            return;
+                        }
+                    }
+                } catch (_) {}
+                pm.saveCurrentProject(); // localStorage fallback
+                break;
+            }
+
+            case 'save-as': {
+                const current = document.getElementById('project-name')?.textContent || 'Beats2026';
+                const newName = prompt('Save As:', current);
+                if (!newName) return;
+                const r = await pm.saveProjectAs(newName);
+                if (r?.success && !r?.canceled) {
+                    document.getElementById('project-name').textContent = newName;
+                    this.clearUnsavedIndicator();
+                    this.showNotification(`Saved as: ${newName}`, 'success');
+                }
+                break;
+            }
+
+            case 'rename': {
+                const el = document.getElementById('project-name');
+                if (!el) return;
+                const newName = prompt('Rename project:', el.textContent);
+                if (newName && newName !== el.textContent) {
+                    el.textContent = newName;
+                    pm.markUnsaved();
+                    this.showNotification(`Renamed to: ${newName}`, 'info');
+                }
+                break;
+            }
+
+            case 'load-recent': {
+                if (!data) return;
+                if (pm.unsavedChanges && !confirm(`Load "${data}"? Unsaved changes will be lost.`)) return;
+                const r = await pm.loadProjectByName(data);
+                if (!r.success) this.showNotification(`Failed to load: ${data}`, 'error');
+                break;
+            }
+
+            case 'all-projects': {
+                await this._showProjectListPicker();
+                break;
+            }
+
+            case 'import': {
+                if (!api) { this.showNotification('Import requires desktop app.', 'error'); return; }
+                const r = await api.invoke('load-samples-directory');
+                if (r.success && r.samples?.length) {
+                    this.app.sampleBrowser.loadFromPaths(r.samples);
+                    if (this.app.sampleLibrary) this.app.sampleLibrary.setSamples(r.samples);
+                    this.showNotification(`Imported ${r.samples.length} samples.`, 'success');
+                } else if (r.success) {
+                    this.showNotification('No audio files found in that folder.', 'info');
+                }
+                break;
+            }
+
+            case 'export': {
+                this.showNotification('Bouncing mix…', 'info');
+                await this._exportMix();
+                break;
+            }
+
+            case 'settings': {
+                // Scroll inspector to bottom to reveal settings section
+                const inspector = document.getElementById('inspector-content');
+                if (inspector) inspector.scrollTop = inspector.scrollHeight;
+                this.showNotification('Settings: adjust parameters in the Inspector panel →', 'info');
+                break;
+            }
+
+            case 'quit': {
+                if (pm.unsavedChanges) {
+                    const save = confirm('Save before quitting?');
+                    if (save) await this._fileAction('save');
+                }
+                if (api) api.invoke('quit-app').catch(() => window.close());
+                else window.close();
+                break;
+            }
+        }
+    }
+
+    // ─── Project list picker (fallback for when no OS dialog) ────────────────
+
+    async _showProjectListPicker() {
+        try {
+            const projects = await this.app.projectManager.listAllProjects();
+            if (!projects.length) { this.showNotification('No saved projects found.', 'info'); return; }
+            const list = projects.map((p, i) => `${i + 1}. ${p}`).join('\n');
+            const input = prompt(`Saved projects — type name to load:\n\n${list}`);
+            if (input && projects.includes(input.trim())) {
+                await this.app.projectManager.loadProjectByName(input.trim());
+            }
+        } catch { this.showNotification('Could not list projects.', 'error'); }
+    }
+
+    // ─── WAV export via OfflineAudioContext ───────────────────────────────────
+
+    async _exportMix() {
+        try {
+            const sampleRate = 44100;
+            const duration   = 8; // seconds
+            const offline    = new OfflineAudioContext(2, sampleRate * duration, sampleRate);
+            const gain       = offline.createGain();
+            gain.gain.value  = 0.9;
+            gain.connect(offline.destination);
+
+            const rendered  = await offline.startRendering();
+            const wav       = this._bufferToWav(rendered);
+            const url       = URL.createObjectURL(wav);
+            const a         = document.createElement('a');
+            a.href          = url;
+            const pName     = document.getElementById('project-name')?.textContent || 'mix';
+            a.download      = `${pName.replace(/\s+/g, '_')}_export.wav`;
+
+            // Some Electron builds require the click to happen after being in DOM.
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            this.showNotification('Mix exported to Downloads!', 'success');
+        } catch (e) {
+            const msg = e?.message || String(e);
+            this.showNotification('Export failed: ' + msg, 'error');
+        }
+    }
+
+
+    _bufferToWav(buf) {
+        if (!buf) throw new Error('No audio buffer to export');
+        const ch  = buf.numberOfChannels;
+        const sr  = buf.sampleRate;
+        if (!Number.isFinite(sr) || sr <= 0) throw new Error('Invalid sample rate');
+        if (!Number.isFinite(buf.length) || buf.length <= 0) throw new Error('Rendered buffer is empty');
+
+        const len = buf.length * ch * 2;
+        const ab  = new ArrayBuffer(44 + len);
+        const v   = new DataView(ab);
+        const s   = (o, t) => { for (let i=0;i<t.length;i++) v.setUint8(o+i, t.charCodeAt(i)); };
+        s(0,'RIFF'); v.setUint32(4,36+len,true); s(8,'WAVE'); s(12,'fmt ');
+        v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,ch,true);
+        v.setUint32(24,sr,true); v.setUint32(28,sr*ch*2,true); v.setUint16(32,ch*2,true);
+        v.setUint16(34,16,true); s(36,'data'); v.setUint32(40,len,true);
+        let o=44;
+        for (let i=0;i<buf.length;i++) for (let c=0;c<ch;c++) {
+            const x = Math.max(-1,Math.min(1,buf.getChannelData(c)[i]));
+            v.setInt16(o, x<0 ? x*32768 : x*32767, true); o+=2;
+        }
+        return new Blob([ab], {type:'audio/wav'});
+    }
+
+
+
 
     setupViewControls() {
         // Tab switching
@@ -357,6 +720,8 @@ class UIController {
     }
 
     buildAIPayload(command, prompt) {
+        const choicePool = this.app.choiceSamples || [];
+
         switch (command) {
             // -------------------- Drums --------------------
             case 'generate-drum-pattern':
@@ -409,17 +774,17 @@ class UIController {
 
             // sample browsing helpers (if wired in your backend)
             case 'search-samples':
-                return { query: prompt };
+                return { query: prompt, choiceSamples: choicePool };
             case 'find-kicks':
-                return { query: 'kick' };
+                return { query: 'kick', choiceSamples: choicePool };
             case 'find-snares':
-                return { query: 'snare' };
+                return { query: 'snare', choiceSamples: choicePool };
             case 'find-bass':
-                return { query: 'bass' };
+                return { query: 'bass', choiceSamples: choicePool };
             case 'find-vocals':
-                return { query: 'vocal' };
+                return { query: 'vocal', choiceSamples: choicePool };
             case 'random-inspiration':
-                return { query: '' };
+                return { query: '', choiceSamples: choicePool };
 
             default:
                 return { prompt };
@@ -470,37 +835,37 @@ class UIController {
 
     setupKeyboardShortcuts() {
         document.addEventListener('keydown', (e) => {
+            const ctrl = e.ctrlKey || e.metaKey;
+
             // Space: Play/Pause
             if (e.code === 'Space' && !this.isInputFocused()) {
                 e.preventDefault();
-                if (this.app.transport.isPlaying) {
-                    this.app.transport.pause();
-                } else {
-                    this.app.transport.play();
-                }
+                if (this.app.transport.isPlaying) this.app.transport.pause();
+                else this.app.transport.play();
             }
 
-            // Ctrl+S / Cmd+S: Save
-            if ((e.ctrlKey || e.metaKey) && e.code === 'KeyS') {
+            // Ctrl+S: Save
+            if (ctrl && !e.shiftKey && e.code === 'KeyS') {
                 e.preventDefault();
-                const project = {
-                    name: document.querySelector('.project-name').textContent,
-                    bpm: this.app.transport.bpm,
-                    timeSignature: this.app.transport.timeSignature,
-                    tracks: this.app.audioEngine.tracks,
-                };
-                this.app.projectManager.saveProject(project);
+                this._fileAction('save');
             }
 
-            // Ctrl+N / Cmd+N: New
-            if ((e.ctrlKey || e.metaKey) && e.code === 'KeyN') {
+            // Ctrl+Shift+S: Save As
+            if (ctrl && e.shiftKey && e.code === 'KeyS') {
                 e.preventDefault();
-                if (this.app.projectManager.unsavedChanges) {
-                    if (!confirm('Create new project? Unsaved changes will be lost.')) {
-                        return;
-                    }
-                }
-                this.app.projectManager.newProject('Beats2026');
+                this._fileAction('save-as');
+            }
+
+            // Ctrl+N: New
+            if (ctrl && e.code === 'KeyN') {
+                e.preventDefault();
+                this._fileAction('new');
+            }
+
+            // Ctrl+O: Open
+            if (ctrl && e.code === 'KeyO') {
+                e.preventDefault();
+                this._fileAction('open');
             }
         });
     }
@@ -710,12 +1075,142 @@ class UIController {
         });
     }
 
-    renderSampleList(samples) {
-        const list = document.getElementById('samples-list') || document.getElementById('samples-tree');
+    setupStaticTracks(tracks) {
+        const clipAreas = [
+            { trackId: 'track-1', elId: 'track-1-clips' },
+            { trackId: 'track-2', elId: 'track-2-clips' },
+            { trackId: 'track-3', elId: 'track-3-clips' },
+        ];
+
+        for (const { trackId, elId } of clipAreas) {
+            const clipsArea = document.getElementById(elId);
+            if (!clipsArea) continue;
+
+            // Drag/drop (add sample clips)
+            clipsArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                clipsArea.style.backgroundColor = 'rgba(0, 136, 255, 0.1)';
+            });
+
+            clipsArea.addEventListener('dragleave', () => {
+                clipsArea.style.backgroundColor = '';
+            });
+
+            clipsArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                clipsArea.style.backgroundColor = '';
+                const data = e.dataTransfer.getData('application/json');
+                if (!data) return;
+
+                const sampleData = JSON.parse(data);
+                if (sampleData.type === 'sample') {
+                    this.app.sampleBrowser.addSampleToTrack(sampleData.path, trackId, 0);
+                    this.app.markProjectModified();
+                }
+            });
+        }
+    }
+
+    setupStaticMixer(tracks) {
+        // Wire mute/solo buttons that exist in index.html.
+        // Header buttons:
+        const headerMuteSolo = [
+            { trackId: 'track-1', headerId: 'track-header-1' },
+            { trackId: 'track-2', headerId: 'track-header-2' },
+            { trackId: 'track-3', headerId: 'track-header-3' },
+        ];
+
+        for (const { trackId, headerId } of headerMuteSolo) {
+            const header = document.getElementById(headerId);
+            if (!header) continue;
+
+            const muteBtn = header.querySelector('.track-btn-mute');
+            const soloBtn = header.querySelector('.track-btn-solo');
+
+            muteBtn?.addEventListener('click', () => {
+                const track = this.app.audioEngine.getTrackById?.(trackId);
+                if (track) track.isMuted = !track.isMuted;
+                this.app.audioEngine.setTrackMute(trackId, !!track?.isMuted);
+                muteBtn.classList.toggle('active', !!track?.isMuted);
+                this.app.markProjectModified();
+            });
+
+            soloBtn?.addEventListener('click', () => {
+                const track = this.app.audioEngine.getTrackById?.(trackId);
+                if (track) track.isSolo = !track.isSolo;
+                this.app.audioEngine.setTrackSolo(trackId, !!track?.isSolo);
+                soloBtn.classList.toggle('active', !!track?.isSolo);
+                this.app.markProjectModified();
+            });
+        }
+
+        // Mixer panel faders/buttons:
+        const mixerChannels = [
+            { trackId: 'track-1', faderIndex: 1, meterId: 'fader-value-1', channelIndex: 0 },
+            { trackId: 'track-2', faderIndex: 2, meterId: 'fader-value-2', channelIndex: 1 },
+            { trackId: 'track-3', faderIndex: 3, meterId: 'fader-value-3', channelIndex: 2 },
+        ];
+
+        const mixerPanel = document.querySelector('.mixer-panel .mixer-content');
+        if (!mixerPanel) return;
+
+        const channels = mixerPanel.querySelectorAll('.mixer-channel');
+        mixerChannels.forEach((cfg, i) => {
+            const channelEl = channels[cfg.channelIndex] || channels[i];
+            if (!channelEl) return;
+
+            const fader = channelEl.querySelector('.mixer-fader');
+            const muteBtn = channelEl.querySelector('.mixer-btn-mute');
+            const soloBtn = channelEl.querySelector('.mixer-btn-solo');
+            const valueEl = document.getElementById(cfg.meterId);
+
+            fader?.addEventListener('input', (e) => {
+                const db = parseInt(e.target.value);
+                this.app.audioEngine.setTrackVolume(cfg.trackId, db);
+                if (valueEl) valueEl.textContent = `${db} dB`;
+                this.app.markProjectModified();
+            });
+
+            muteBtn?.addEventListener('click', () => {
+                const track = this.app.audioEngine.getTrackById?.(cfg.trackId);
+                if (track) track.isMuted = !track.isMuted;
+                this.app.audioEngine.setTrackMute(cfg.trackId, !!track?.isMuted);
+                muteBtn.classList.toggle('active', !!track?.isMuted);
+                this.app.markProjectModified();
+            });
+
+            soloBtn?.addEventListener('click', () => {
+                const track = this.app.audioEngine.getTrackById?.(cfg.trackId);
+                if (track) track.isSolo = !track.isSolo;
+                this.app.audioEngine.setTrackSolo(cfg.trackId, !!track?.isSolo);
+                soloBtn.classList.toggle('active', !!track?.isSolo);
+                this.app.markProjectModified();
+            });
+        });
+    }
+
+    renderChoiceSamples(samples) {
+        // Dedicated pinned section in the Samples tab
+        const list = document.getElementById('choice-samples-list');
+        if (!list) return;
+        this.renderSampleList(samples, 'choice');
+    }
+
+    renderSampleList(samples, mode = 'all') {
+        // mode:
+        //  - 'choice' → #choice-samples-list (preloaded/pinned)
+        //  - 'all'    → #all-samples-list (full library)
+        let list = null;
+
+        if (mode === 'choice') list = document.getElementById('choice-samples-list');
+        if (mode === 'all') list = document.getElementById('all-samples-list');
+
+        // Back-compat fallback
+        if (!list) list = document.getElementById('samples-list') || document.getElementById('samples-tree');
         if (!list) return;
 
         list.innerHTML = '';
-        samples.forEach(file => {
+        (samples || []).forEach(file => {
             const item = document.createElement('div');
             item.className = 'tree-item';
             item.draggable = true;
@@ -760,11 +1255,30 @@ class UIController {
 // INITIALIZATION
 // ============================================
 
+// Surface runtime errors (so "nothing works" becomes actionable)
+window.addEventListener('error', (e) => {
+    try {
+        console.error('[Renderer Error]', e.error || e.message);
+    } catch (_) {}
+});
+window.addEventListener('unhandledrejection', (e) => {
+    try {
+        console.error('[Unhandled Rejection]', e.reason || e);
+    } catch (_) {}
+});
+
 // Initialize app when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+const startApp = () => {
+    try {
         window.daw = new DAWApplication();
-    });
+    } catch (e) {
+        console.error('[DAW init failure]', e);
+        alert('DAW init failure: ' + (e?.message || e));
+    }
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => startApp());
 } else {
-    window.daw = new DAWApplication();
+    startApp();
 }
